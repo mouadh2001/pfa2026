@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <title>Lab Escape Game</title>
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="LabEscape" />
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.js"></script>
+    <link rel="stylesheet" href="login.css" />
+    <link rel="stylesheet" href="qcm.css" />
+    <audio id="htmlMusic" loop>
+      <source src="sounds/login.wav" type="audio/wav" />
+    </audio>
+  </head>
+  <body align="center">
+    <!-- LOGIN CONTAINER -->
+    <div id="login-container">
+      <h2 style="color: white">Patho Quest</h2>
+
+      <form
+        id="login-form"
+        style="display: flex; flex-direction: column; width: 300px"
+      >
+        <input
+          type="email"
+          id="email"
+          placeholder="Email"
+          required
+          style="margin: 10px; padding: 10px"
+        />
+        <input
+          type="password"
+          id="password"
+          placeholder="Password"
+          required
+          style="margin: 10px; padding: 10px"
+        />
+        <button type="submit" style="padding: 10px; margin: 10px">Login</button>
+        <p id="error-message" style="color: red; text-align: center"></p>
+      </form>
+    </div>
+
+    <!-- GAME CONTAINER -->
+    <div id="game-container" style="display: none"></div>
+
+    <!-- GAME CONTROLS PANEL -->
+    <div id="controls-panel" aria-label="Touch controls">
+      <!-- LEFT BUTTON -->
+      <button
+        id="btn-left"
+        class="game-control-button"
+        aria-label="Move left"
+        onmousedown="window.GameControls && window.GameControls.pressLeft()"
+        onmouseup="window.GameControls && window.GameControls.releaseLeft()"
+        ontouchstart="window.GameControls && window.GameControls.pressLeft()"
+        ontouchend="window.GameControls && window.GameControls.releaseLeft()"
+      >
+        ⬅️
+      </button>
+
+      <!-- JUMP BUTTON -->
+      <button
+        id="btn-jump"
+        class="game-control-button"
+        aria-label="Jump"
+        onmousedown="window.GameControls && window.GameControls.pressJump()"
+        onmouseup="window.GameControls && window.GameControls.releaseJump()"
+        ontouchstart="window.GameControls && window.GameControls.pressJump()"
+        ontouchend="window.GameControls && window.GameControls.releaseJump()"
+      >
+        ⬆️
+      </button>
+
+      <!-- RIGHT BUTTON -->
+      <button
+        id="btn-right"
+        class="game-control-button"
+        aria-label="Move right"
+        onmousedown="window.GameControls && window.GameControls.pressRight()"
+        onmouseup="window.GameControls && window.GameControls.releaseRight()"
+        ontouchstart="window.GameControls && window.GameControls.pressRight()"
+        ontouchend="window.GameControls && window.GameControls.releaseRight()"
+      >
+        ➡️
+      </button>
+    </div>
+
+    <script>
+      const music = document.getElementById("htmlMusic");
+
+      // browser autoplay restriction
+      document.addEventListener(
+        "click",
+        () => {
+          music.play();
+        },
+        { once: true },
+      );
+    </script>
+    <!-- Auth -->
+    <script type="module" src="./auth.js"></script>
+    <!-- Scenes (modules are imported by auth.js) -->
+    <!-- auth.js imports GameScene which in turn loads LabScene -->
+
+    <!-- Service Worker Registration -->
+    <script>
+      // Register Service Worker for PWA
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("service-worker.js")
+            .then((registration) => {
+              console.log(
+                "✓ Service Worker registered successfully:",
+                registration,
+              );
+            })
+            .catch((error) => {
+              console.error("✗ Service Worker registration failed:", error);
+            });
+        });
+      } else {
+        console.warn("Service Workers not supported in this browser");
+      }
+    </script>
+  </body>
+</html>

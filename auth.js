@@ -1,0 +1,105 @@
+// ===============================
+// CONFIG
+// ===============================
+const API_URL = "https://pathquestadmin.onrender.com/api/player"; // CHANGE THIS
+
+// ===============================
+// DOM
+// ===============================
+const loginForm = document.getElementById("login-form");
+const loginContainer = document.getElementById("login-container");
+const gameContainer = document.getElementById("game-container");
+const errorMessage = document.getElementById("error-message");
+
+// ===============================
+// IMPORTS
+// ===============================
+import { startGame } from "./src/Scenes/gameScene.js";
+
+// ===============================
+// CHECK TOKEN ON LOAD
+// ===============================
+window.addEventListener("load", () => {
+  // Hide controls panel on page load
+  const controlsPanel = document.getElementById("controls-panel");
+  if (controlsPanel) {
+    controlsPanel.style.display = "none";
+  }
+
+  const token = localStorage.getItem("token");
+
+  if (token) {
+    showGame();
+  }
+});
+
+// ===============================
+// LOGIN
+// ===============================
+loginForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  try {
+    const response = await fetch(`${API_URL}/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok && data.token) {
+      localStorage.setItem("token", data.token);
+      showGame();
+    } else {
+      showError("Invalid email or password");
+    }
+  } catch (err) {
+    showError("Server error. Try again.");
+  }
+});
+
+// ===============================
+// SHOW GAME
+// ===============================
+function showGame() {
+  loginContainer.style.display = "none";
+  gameContainer.style.display = "flex";
+
+  // Show control buttons
+  const controlsPanel = document.getElementById("controls-panel");
+  if (controlsPanel) {
+    controlsPanel.style.display = "flex";
+  }
+
+  // Start Phaser
+  setTimeout(() => {
+    startGame();
+  }, 50);
+}
+
+// ===============================
+// ERROR
+// ===============================
+function showError(msg) {
+  errorMessage.innerText = msg;
+
+  // Hide controls on error
+  const controlsPanel = document.getElementById("controls-panel");
+  if (controlsPanel) {
+    controlsPanel.style.display = "none";
+  }
+}
+
+// ===============================
+// LOGOUT (optional)
+// ===============================
+function logout() {
+  localStorage.removeItem("token");
+  location.reload();
+}

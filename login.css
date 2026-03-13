@@ -1,0 +1,198 @@
+/* ===== Reset & Body ===== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Press Start 2P", cursive, Arial, sans-serif;
+  background-image: url(./assets/loginbg.png);
+  background-repeat: no-repeat; /* Don’t repeat */
+  background-position: center center; /* Center the image */
+  background-size: cover;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* ===== Login Container ===== */
+#login-container {
+  background: rgba(0, 0, 0, 0.85);
+  padding: 40px 50px;
+  border-radius: 15px;
+  box-shadow: 0 0 25px rgba(78, 84, 200, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 350px;
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+/* ===== Headings ===== */
+#login-container h2 {
+  font-size: 24px;
+  color: #fff;
+  margin-bottom: 25px;
+  text-shadow: 0 0 10px #4e54c8;
+}
+
+/* ===== Inputs ===== */
+#login-form input {
+  width: 100%;
+  padding: 12px 15px;
+  margin: 10px 0;
+  border: 2px solid #4e54c8;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  font-size: 14px;
+  text-shadow: 0 0 2px #000;
+  transition: all 0.3s ease;
+}
+
+#login-form input:focus {
+  border-color: #8f94fb;
+  box-shadow: 0 0 10px #8f94fb;
+  outline: none;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* ===== Button ===== */
+#login-form button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  background: linear-gradient(45deg, #4e54c8, #8f94fb);
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 0 10px #4e54c8;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+}
+
+#login-form button:hover {
+  background: linear-gradient(45deg, #8f94fb, #4e54c8);
+  box-shadow: 0 0 20px #8f94fb;
+  transform: scale(1.05);
+}
+
+/* ===== Error Message ===== */
+#error-message {
+  color: #ff4c4c;
+  margin-top: 10px;
+  text-align: center;
+  font-weight: bold;
+  text-shadow: 0 0 5px #000;
+}
+
+/* ===== Game Container ===== */
+#game-container {
+  position: relative;
+  width: 100vw;
+  max-width: 100vw;
+  max-height: 100vh;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+#game-container canvas {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* ===== Touch Controls Panel ===== */
+#controls-panel {
+  display: none;
+  position: fixed;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  gap: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 10, 30, 0.72);
+  padding: 16px 18px;
+  border-radius: 24px;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  user-select: none;
+  touch-action: none;
+}
+
+.game-control-button {
+  width: 72px;
+  height: 72px;
+  border: none;
+  border-radius: 18px;
+  font-size: 26px;
+  font-weight: 900;
+  color: #ffffff;
+  cursor: pointer;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.16),
+    rgba(0, 0, 0, 0.35)
+  );
+  box-shadow:
+    0 10px 18px rgba(0, 0, 0, 0.45),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+  transition:
+    transform 0.1s ease,
+    box-shadow 0.1s ease,
+    background 0.2s ease;
+  touch-action: manipulation;
+}
+
+.game-control-button:active {
+  transform: scale(0.92);
+  box-shadow:
+    0 6px 12px rgba(0, 0, 0, 0.55),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
+.game-control-button:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.55);
+  outline-offset: 3px;
+}
+
+#btn-jump {
+  width: 86px;
+  height: 86px;
+}
+
+/* ===== Animations ===== */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 400px) {
+  #login-container {
+    width: 90%;
+    padding: 30px 20px;
+  }
+}
