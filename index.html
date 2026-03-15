@@ -55,44 +55,43 @@
 
     <!-- GAME CONTROLS PANEL -->
     <div id="controls-panel" aria-label="Touch controls">
-      <!-- LEFT BUTTON -->
-      <button
-        id="btn-left"
-        class="game-control-button"
-        aria-label="Move left"
-        onmousedown="window.GameControls && window.GameControls.pressLeft()"
-        onmouseup="window.GameControls && window.GameControls.releaseLeft()"
-        ontouchstart="window.GameControls && window.GameControls.pressLeft()"
-        ontouchend="window.GameControls && window.GameControls.releaseLeft()"
-      >
-        ⬅️
-      </button>
-
-      <!-- JUMP BUTTON -->
-      <button
-        id="btn-jump"
-        class="game-control-button"
-        aria-label="Jump"
-        onmousedown="window.GameControls && window.GameControls.pressJump()"
-        onmouseup="window.GameControls && window.GameControls.releaseJump()"
-        ontouchstart="window.GameControls && window.GameControls.pressJump()"
-        ontouchend="window.GameControls && window.GameControls.releaseJump()"
-      >
-        ⬆️
-      </button>
-
-      <!-- RIGHT BUTTON -->
-      <button
-        id="btn-right"
-        class="game-control-button"
-        aria-label="Move right"
-        onmousedown="window.GameControls && window.GameControls.pressRight()"
-        onmouseup="window.GameControls && window.GameControls.releaseRight()"
-        ontouchstart="window.GameControls && window.GameControls.pressRight()"
-        ontouchend="window.GameControls && window.GameControls.releaseRight()"
-      >
-        ➡️
-      </button>
+      <div class="controls-group controls-left">
+        <button
+          id="btn-left"
+          class="game-control-button"
+          aria-label="Move left"
+          onmousedown="window.GameControls && window.GameControls.pressLeft()"
+          onmouseup="window.GameControls && window.GameControls.releaseLeft()"
+          ontouchstart="window.GameControls && window.GameControls.pressLeft()"
+          ontouchend="window.GameControls && window.GameControls.releaseLeft()"
+        >
+          ⬅️
+        </button>
+        <button
+          id="btn-right"
+          class="game-control-button"
+          aria-label="Move right"
+          onmousedown="window.GameControls && window.GameControls.pressRight()"
+          onmouseup="window.GameControls && window.GameControls.releaseRight()"
+          ontouchstart="window.GameControls && window.GameControls.pressRight()"
+          ontouchend="window.GameControls && window.GameControls.releaseRight()"
+        >
+          ➡️
+        </button>
+      </div>
+      <div class="controls-group controls-right">
+        <button
+          id="btn-jump"
+          class="game-control-button"
+          aria-label="Jump"
+          onmousedown="window.GameControls && window.GameControls.pressJump()"
+          onmouseup="window.GameControls && window.GameControls.releaseJump()"
+          ontouchstart="window.GameControls && window.GameControls.pressJump()"
+          ontouchend="window.GameControls && window.GameControls.releaseJump()"
+        >
+          ⬆️
+        </button>
+      </div>
     </div>
 
     <script>
