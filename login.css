@@ -129,6 +129,7 @@ body {
   pointer-events: none;
   user-select: none;
   touch-action: none;
+  opacity: 0.3;
 }
 
 .controls-group {
@@ -162,6 +163,7 @@ body {
     background 0.15s ease;
   opacity: 0.95;
   touch-action: manipulation;
+  opacity: 0.3;
 }
 
 .game-control-button:hover,
@@ -178,6 +180,7 @@ body {
   border-color: rgba(255, 255, 255, 0.95);
   background: rgba(255, 255, 255, 0.08);
   color: #000;
+  opacity: 0.3;
 }
 
 @media (max-width: 480px) {
