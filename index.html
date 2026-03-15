@@ -57,6 +57,19 @@
     <div id="controls-panel" aria-label="Touch controls">
       <div class="controls-group controls-left">
         <button
+          id="btn-jump"
+          class="game-control-button"
+          aria-label="Jump"
+          onmousedown="window.GameControls && window.GameControls.pressJump()"
+          onmouseup="window.GameControls && window.GameControls.releaseJump()"
+          ontouchstart="window.GameControls && window.GameControls.pressJump()"
+          ontouchend="window.GameControls && window.GameControls.releaseJump()"
+        >
+          ⬆️
+        </button>
+      </div>
+      <div class="controls-group controls-right">
+        <button
           id="btn-left"
           class="game-control-button"
           aria-label="Move left"
@@ -77,19 +90,6 @@
           ontouchend="window.GameControls && window.GameControls.releaseRight()"
         >
           ➡️
-        </button>
-      </div>
-      <div class="controls-group controls-right">
-        <button
-          id="btn-jump"
-          class="game-control-button"
-          aria-label="Jump"
-          onmousedown="window.GameControls && window.GameControls.pressJump()"
-          onmouseup="window.GameControls && window.GameControls.releaseJump()"
-          ontouchstart="window.GameControls && window.GameControls.pressJump()"
-          ontouchend="window.GameControls && window.GameControls.releaseJump()"
-        >
-          ⬆️
         </button>
       </div>
     </div>
