@@ -23,9 +23,9 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("scope", "../assets/scope.png");
     this.load.image("loupe", "../assets/loupe.png");
     this.load.image("tumor", "../assets/tumeur.jpg");
-    this.load.image("scopeloop", "../assets/scopeloupe.png");
     this.load.image("platforme", "../assets/platforme.png");
     this.load.image("enemy", "../assets/enemy1.png");
+    this.load.image("golden", "../assets/golden.png");
     // Load audio
     this.load.audio("bgMusic", "../sounds/background.wav");
     this.load.audio("jumpSfx", "../sounds/jumpin.wav");
@@ -75,13 +75,13 @@ export default class GameScene extends Phaser.Scene {
     this.incorrectcount = 0;
 
     this.physics.world.gravity.y = 1300;
-    const worldWidth = 1320;
+    const worldWidth = 1200;
     // Keep world height consistent across devices (uses configured game height)
     const worldHeight = this.sys.game.config.height;
 
     //progressbar
     this.progressBar = this.add.rectangle(
-      380,
+      400,
       30,
       this.correctcount,
       20,
@@ -92,7 +92,7 @@ export default class GameScene extends Phaser.Scene {
     //Savois acquis
 
     this.savois = this.add
-      .text(150, 20, "|  Savois acquis:", {
+      .text(150, 20, "|  Savoir acquis:", {
         fontSize: "22px",
         fill: "#ffffff",
         fontStyle: "bold",
@@ -116,7 +116,7 @@ export default class GameScene extends Phaser.Scene {
     createFloor(this, worldWidth / 2, this.floorY, worldWidth, 40);
     createPlatformRelative(this, 400, 100, 150, 20, "q1"); //1st q platform
     createPlatformRelative(this, 700, 130, 150, 20, "q2"); //2nd q platform
-    createPlatformRelative(this, 1200, 130, 150, 20, "q3"); //loupe q platform
+    createPlatformRelative(this, 1200, 100, 150, 20, "q3"); //loupe q platform
     createPlatformRelative(this, 950, 300, 150, 20, "loupe"); //loupe platform
     createPlatformRelative(this, 150, 130, 150, 20, "pass"); //pass to enemy platform
     createPlatformRelative(this, 530, 300, 400, 20, "enemy"); //enemy platform
@@ -124,6 +124,7 @@ export default class GameScene extends Phaser.Scene {
     createPlatformRelative(this, 800, 410, 150, 20, "q5"); //q5 platform
     createPlatformRelative(this, 950, 410, 150, 20, "void"); //void platform
     createPlatformRelative(this, 1175, 410, 300, 20, "q7"); //q7 platform
+    createPlatformRelative(this, 880, 150, 20, 300, "block"); //block platform
 
     // 3. Player
     this.playerController = new PlayerController(this);
@@ -147,7 +148,6 @@ export default class GameScene extends Phaser.Scene {
     // Touch event handlers
     this.input.on("pointerdown", this.handleTouchStart, this);
     this.input.on("pointerup", this.handleTouchEnd, this);
-    this.input.on("pointermove", this.handleTouchMove, this);
 
     console.log("✓ Touch controls initialized");
 
@@ -162,7 +162,7 @@ export default class GameScene extends Phaser.Scene {
     this.itemManager.addScopeRelative(100, 450, "q4", false);
     this.itemManager.addScopeRelative(1250, 450, "q6", false);
     this.itemManager.addScopeRelative(800, 450, "q5", false);
-    this.itemManager.addScopeLoopRelative(1200, 170, "tumor_v", true);
+    this.itemManager.addScopeLoopRelative(1200, 140, "tumor_v", true);
     this.itemManager.addLoupeRelative(950, 340);
 
     // 6. Enemies
@@ -170,11 +170,13 @@ export default class GameScene extends Phaser.Scene {
     this.enemyManager = new EnemyManager(this);
     this.enemyManager.createEnemyRelative(530, 330, 400, 100, "E1");
     this.enemyManager2 = new EnemyManager(this);
-    this.enemyManager2.createEnemyRelative(650, 40, 1000, 100, "E2");
+    this.enemyManager2.createEnemyRelative(450, 40, 700, 100, "E2");
     this.enemyManager3 = new EnemyManager(this);
     this.enemyManager3.createEnemyRelative(210, 440, 400, 100, "E3");
     this.enemyManager4 = new EnemyManager(this);
     this.enemyManager4.createEnemyRelative(1020, 440, 550, 100, "E4");
+    this.enemyManager5 = new EnemyManager(this);
+    this.enemyManager5.createEnemyRelative(1100, 40, 400, 100, "E5");
 
     // overlaps
     this.physics.add.overlap(
@@ -253,20 +255,6 @@ export default class GameScene extends Phaser.Scene {
       this.touchInput.right = false;
     } else {
       this.touchInput.jump = false;
-    }
-  }
-
-  handleTouchMove(pointer) {
-    const screenWidth = this.scale.width;
-    const screenHeight = this.scale.height;
-
-    // Update position based on drag for responsive controls
-    this.touchInput.left = pointer.x < screenWidth / 3;
-    this.touchInput.right = pointer.x > (screenWidth * 2) / 3;
-
-    // Optional: Keep jump active if still in lower half
-    if (pointer.y > screenHeight / 2 && pointer.isDown) {
-      this.touchInput.jump = true;
     }
   }
 
@@ -387,12 +375,6 @@ const config = {
   input: {
     touchGestureEnabled: true,
     keyboard: true,
-    mouse: {
-      target: window,
-      preventDefaultDown: true,
-      preventDefaultMove: true,
-      preventDefaultUp: true,
-    },
   },
 };
 let game = null;

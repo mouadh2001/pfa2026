@@ -20,10 +20,22 @@
   font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   max-width: 450px;
   width: 90%;
-  box-shadow:
-    0 20px 25px -5px rgba(0, 0, 0, 0.2),
-    0 10px 10px -5px rgba(0, 0, 0, 0.1);
-  border-top: 6px solid #3b82f6; /* Professional blue accent */
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+  border-top: 6px solid #3b82f6;
+
+  /* --- SCROLL LOGIC --- */
+  max-height: 85vh; /* Modal won't exceed 85% of screen height */
+  overflow-y: auto; /* Adds a vertical scrollbar only if content is too long */
+  overflow-x: hidden; /* Prevents accidental horizontal shifting */
+}
+
+/* Optional: Make the scrollbar look cleaner (Chrome/Safari/Edge) */
+.modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+.modal-content::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
 }
 #modal-question {
   color: #1e293b;

@@ -213,10 +213,10 @@ export class ModalUI {
             this.scene.playerController.respawn();
             this.scene.incorrectcount++;
             if (this.scene.incorrectcount == 1) {
-              this.scene.enemyManager.duplicateEnemyByName("E1", "E5");
-            } else if (this.scene.incorrectcount == 2) {
               this.scene.enemyManager.increaseEnemySpeedByName("E1", 50);
               this.scene.enemyManager.increaseEnemySpeedByName("E5", 50);
+            } else if (this.scene.incorrectcount == 2) {
+              this.scene.enemyManager.duplicateEnemyByName("E1", "E5");
             } else if (this.scene.incorrectcount == 3) {
               this.scene.enemyManager.increaseEnemySpeedByName("E3", 50);
             } else if (this.scene.incorrectcount == 4) {

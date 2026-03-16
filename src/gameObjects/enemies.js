@@ -8,7 +8,7 @@ export class EnemyManager {
     const { scene } = this;
     const y = scene.floorY - heightAboveFloor;
     const enemy = scene.enemies.create(x, y, "enemy");
-    enemy.setScale(0.3).setDepth(3);
+    enemy.setScale(0.2).setDepth(3);
     enemy.name = name;
     // Resize physics body manually
     enemy.body.setSize(enemy.width * 0.3, enemy.height * 0.3);
@@ -76,15 +76,47 @@ export class EnemyManager {
     });
   }
 
+  // New method to handle stomp logic
+  checkStomp(player, enemy) {
+    // 1. Check if player is falling (positive Y velocity)
+    // 2. Check if player's bottom is roughly above the enemy's center
+    const isFalling = player.body.velocity.y > 0;
+    const isAbove = player.y < enemy.y - enemy.displayHeight / 2;
+
+    if (isFalling && isAbove) {
+      // --- STOMP SUCCESSFUL ---
+
+      // Bounce the player up
+      player.setVelocityY(-300);
+
+      // Play a sound if you have one
+      // this.scene.sound.play("stompSfx");
+
+      // Remove the enemy
+      enemy.destroy();
+
+      return true; // Enemy was killed
+    }
+
+    return false; // Enemy was not killed
+  }
+
   handleCollision(player, enemy) {
-    // 1. Check if the popup is already open to prevent double-triggering
+    // Check if the player successfully stomped the enemy first
+    if (this.checkStomp(player, enemy)) {
+      return; // Exit the function so the player doesn't die
+    }
+
+    // --- STANDARD DEATH LOGIC (Existing) ---
     if (this.scene.popupOpen) return;
-    // Inside handleCollision
+
     if (this.scene.playerController.sfx.run.isPlaying) {
       this.scene.playerController.sfx.run.stop();
     }
-    // 2. Play the death sound immediately
+
     this.scene.sound.play("deathSfx", { volume: 0.6 });
+    this.scene.popupOpen = true;
+    this.scene.physics.pause();
 
     // 3. Pause the game and show the UI
     this.scene.popupOpen = true;

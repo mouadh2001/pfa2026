@@ -17,8 +17,9 @@ export class ItemManager {
     return scope;
   }
 
+
   addScopeLoop(x, y, questionId, locked) {
-    let scope = this.items.create(x, y, "scopeloop");
+    let scope = this.items.create(x, y, "golden");
     scope.setScale(0.2);
     scope.setDepth(2);
     scope.refreshBody();
@@ -42,6 +43,7 @@ export class ItemManager {
     const y = this.scene.floorY - heightAboveFloor;
     return this.addScope(x, y, questionId, locked);
   }
+
 
   addScopeLoopRelative(x, heightAboveFloor, questionId, locked) {
     const y = this.scene.floorY - heightAboveFloor;
