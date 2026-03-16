@@ -140,11 +140,8 @@ export default class GameScene extends Phaser.Scene {
       jump: false,
     };
 
-    // Touch event handlers
-    this.input.on("pointerdown", this.handleTouchStart, this);
-    this.input.on("pointerup", this.handleTouchEnd, this);
+ 
 
-    console.log("✓ Touch controls initialized");
 
     // ===== SETUP HTML BUTTON CONTROLS =====
     this.setupButtonControls();
@@ -213,45 +210,7 @@ export default class GameScene extends Phaser.Scene {
     this.enemyManager.update();
   }
 
-  // ===== TOUCH EVENT HANDLERS =====
-  handleTouchStart(pointer) {
-    const screenWidth = this.scale.width;
-    const screenHeight = this.scale.height;
 
-    console.log(
-      `👆 Touch Start: ${pointer.x}, ${pointer.y} (Screen: ${screenWidth}x${screenHeight})`,
-    );
-
-    // Left third of screen = move left
-    if (pointer.x < screenWidth / 3) {
-      this.touchInput.left = true;
-      console.log("← Moving LEFT");
-    }
-    // Right third of screen = move right
-    else if (pointer.x > (screenWidth * 2) / 3) {
-      this.touchInput.right = true;
-      console.log("→ Moving RIGHT");
-    }
-    // Center area (lower half) = jump
-    else if (pointer.y > screenHeight / 2) {
-      this.touchInput.jump = true;
-      console.log("↑ JUMP");
-    }
-  }
-
-  handleTouchEnd(pointer) {
-    const screenWidth = this.scale.width;
-
-    console.log("👆 Touch End");
-
-    if (pointer.x < screenWidth / 3) {
-      this.touchInput.left = false;
-    } else if (pointer.x > (screenWidth * 2) / 3) {
-      this.touchInput.right = false;
-    } else {
-      this.touchInput.jump = false;
-    }
-  }
 
   // ===== SETUP HTML BUTTON CONTROLS =====
   setupButtonControls() {
@@ -368,7 +327,7 @@ const config = {
 
   // ===== INPUT OPTIMIZATION =====
   input: {
-    touchGestureEnabled: true,
+    touchGestureEnabled: false,
     keyboard: true,
   },
 };
