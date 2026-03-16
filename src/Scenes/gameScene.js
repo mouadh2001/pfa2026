@@ -39,12 +39,7 @@ export default class GameScene extends Phaser.Scene {
   }
 
   create() {
-    // Stop any existing music
-    const htmlMusic = document.getElementById("htmlMusic");
-    if (htmlMusic) {
-      htmlMusic.pause();
-      htmlMusic.currentTime = 0;
-    }
+
 
     // ===== CANVAS SCALING MONITORING =====
     console.log("📐 Game Canvas Scaling:");
@@ -75,7 +70,7 @@ export default class GameScene extends Phaser.Scene {
     this.incorrectcount = 0;
 
     this.physics.world.gravity.y = 1300;
-    const worldWidth = 1200;
+    const worldWidth = 1320;
     // Keep world height consistent across devices (uses configured game height)
     const worldHeight = this.sys.game.config.height;
 

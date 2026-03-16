@@ -18,9 +18,6 @@
     <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.js"></script>
     <link rel="stylesheet" href="login.css" />
     <link rel="stylesheet" href="qcm.css" />
-    <audio id="htmlMusic" loop>
-      <source src="sounds/login.wav" type="audio/wav" />
-    </audio>
   </head>
   <body align="center">
     <!-- LOGIN CONTAINER -->
@@ -90,18 +87,6 @@
       </div>
     </div>
 
-    <script>
-      const music = document.getElementById("htmlMusic");
-
-      // browser autoplay restriction
-      document.addEventListener(
-        "click",
-        () => {
-          music.play();
-        },
-        { once: true },
-      );
-    </script>
     <!-- Auth -->
     <script type="module" src="./auth.js"></script>
     <!-- Scenes (modules are imported by auth.js) -->

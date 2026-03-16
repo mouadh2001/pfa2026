@@ -14,19 +14,22 @@
 }
 .modal-content {
   background: #ffffff;
-  padding: 40px;
+  padding: 24px; /* Réduit pour laisser plus de place au contenu sur mobile */
   border-radius: 16px;
   text-align: center;
   font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  max-width: 450px;
   width: 90%;
+  max-width: 450px;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
   border-top: 6px solid #3b82f6;
 
-  /* --- SCROLL LOGIC --- */
-  max-height: 85vh; /* Modal won't exceed 85% of screen height */
-  overflow-y: auto; /* Adds a vertical scrollbar only if content is too long */
-  overflow-x: hidden; /* Prevents accidental horizontal shifting */
+  /* SCROLL LOGIC */
+  max-height: 85vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  /* Centrage propre */
+  margin: 10px;
 }
 
 /* Optional: Make the scrollbar look cleaner (Chrome/Safari/Edge) */
@@ -39,23 +42,52 @@
 }
 #modal-question {
   color: #1e293b;
-  font-size: 22px;
-  margin-bottom: 25px;
-  line-height: 1.4;
+  font-size: 1.2rem; /* Utilisation de rem pour s'adapter à la taille de police système */
+  margin-bottom: 20px;
+  line-height: 1.3;
 }
 .answer-btn {
   display: block;
   width: 100%;
-  margin: 12px 0;
-  padding: 14px;
+  margin: 8px 0;
+  padding: 16px 12px; /* Plus haut sur mobile pour faciliter le toucher (Tap Target) */
   cursor: pointer;
   font-size: 16px;
   font-weight: 600;
   background: #f8fafc;
   color: #334155;
   border: 2px solid #e2e8f0;
-  border-radius: 8px;
+  border-radius: 10px;
   transition: all 0.2s ease;
+  word-wrap: break-word; /* Évite que le texte long ne dépasse du bouton */
+}
+/* --- Adaptations pour Tablettes et Desktops --- */
+@media (min-width: 768px) {
+  .modal-content {
+    padding: 40px; /* Plus d'espace sur grand écran */
+  }
+  #modal-question {
+    font-size: 22px;
+  }
+
+  .answer-btn {
+    padding: 14px; /* Retour à un padding plus fin sur desktop */
+  }
+}
+/* --- Gestion du Hover sur Mobile --- */
+@media (hover: none) {
+  /* Désactive l'effet de survol qui "reste collé" sur les écrans tactiles */
+  .answer-btn:hover {
+    transform: none;
+    background: #f8fafc;
+    border-color: #e2e8f0;
+  }
+  /* Active l'effet seulement au toucher */
+  .answer-btn:active {
+    background: #eff6ff;
+    border-color: #3b82f6;
+    transform: scale(0.98);
+  }
 }
 .answer-btn:hover {
   background: #eff6ff;

@@ -118,7 +118,7 @@ body {
 /* ===== Touch Controls Panel ===== */
 #controls-panel {
   position: fixed;
-  opacity: 0.3;
+  opacity: 0.6;
   bottom: 12px;
   left: 12px;
   right: 12px;
@@ -162,7 +162,7 @@ body {
     transform 0.1s ease,
     background 0.15s ease;
   touch-action: manipulation;
-  opacity: 0.4;
+  opacity: 0.6;
 }
 
 .game-control-button:hover,
@@ -179,7 +179,7 @@ body {
   border-color: rgba(255, 255, 255, 0.95);
   background: rgba(255, 255, 255, 0.08);
   color: #000;
-  opacity: 0.4;
+  opacity: 0.6;
 }
 
 @media (max-width: 480px) {
