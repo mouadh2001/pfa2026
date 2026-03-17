@@ -110,12 +110,13 @@ export class ModalUI {
     const questions = {
       // ... (your existing questions object)
       q1: {
-        q: "En anatomie pathologique, le terme architecture tumorale désigne ?",
+        q: "What is the pattern of this tumor ?",
         a: [
-          "La taille des cellules tumorales",
-          "L'organisation des cellules tumorales",
-          "Le garde de malignité",
-          "Le type immunohistochimique",
+          "Myxoid",
+          "Spindle cell",
+          "Round cell",
+          "Pleomorphic",
+          "Epithelioid",
         ],
         c: 1,
         fbc: "Exact. L’architecture tumorale décrit la façon dont les cellules sont organisées entre elles.",
@@ -123,27 +124,34 @@ export class ModalUI {
       },
       // ADD fbc and fbw to your other questions here so they show up!
       q2: {
-        q: "Une tumeur organisée en amas arrondis bien délimités présente une architecture ?",
-        a: ["Fasciculaire", "Infilitrante", "Nodulaire", "Myxoïde"],
-        c: 2,
+        q: "What is the architectural pattern of this tumor ?",
+        a: ["Plexiform", "Fascicular", "Storiform", "Lobulated", "Whorled"],
+        c: 1,
         fbc: "Correct ! Le terme 'Nodulaire' vient de 'Nodule' (petit nœud/amas).",
         fbw: "Non. Rappelez-vous : amas arrondis = nodules.",
       },
       q3: {
-        q: "Des cellules tumorales disposées en faisceaux parallèles ou entrecroisés évoquent une architecture ?",
-        a: ["Fasciculaire", "Infilitrante", "Nodulaire", "Myxoïde"],
-        c: 0,
+        q: "Does this tumor present ?",
+        a: [
+          "Prominent inflammatory infiltrate",
+          "Nuclear palisade",
+          "Myxoid stroma",
+          "Prominent or distinctive blood vessels",
+          "Scant stroma",
+        ],
+        c: 4,
         fbc: "Exact. Les faisceaux cellulaires sont caractéristiques d’une architecture fasciculaire.",
         fbw: "Incorrect. Une organisation en faisceaux correspond à une architecture fasciculaire, et non nodulaire, infiltrante ou myxoïde.",
       },
 
       q4: {
-        q: "Une architecture tumorale infiltrante se caractérise par ?",
+        q: "Does this tumor present ?",
         a: [
-          "Une croissance bien limitée",
-          "Une organisation en faisceaux",
-          "Une invasion diffuse des tissus adjacents",
-          "Un stroma abondant gélatineux",
+          "Abrupt tumor necrosis",
+          "Hyaline necrosis",
+          "Individually necrotic cells",
+          "Mitotic figures",
+          "Nuclear atypia",
         ],
         c: 2,
         fbc: "Correct. Une tumeur infiltrante envahit progressivement les tissus voisins sans limites nettes.",
@@ -151,22 +159,34 @@ export class ModalUI {
       },
 
       q5: {
-        q: "Une tumeur avec un stroma riche, pâle et gélatineux, pauvre en cellules, présente une architecture ?",
-        a: ["Fasciculaire", "Infilitrante", "Nodulaire", "Myxoïde"],
+        q: "What type of differentiation do you suggest ?",
+        a: [
+          "Smooth muscle differentiation",
+          "Skeletal muscle (striated) differentiation",
+          "Neural differentiation",
+          "Vascular differentiation",
+          "No obvious line of differentiation",
+        ],
         c: 3,
         fbc: "Exact. Le terme myxoïde décrit un stroma abondant d’aspect gélatineux.",
         fbw: "Incorrect. Un stroma pâle, riche et gélatineux est typique d’une architecture myxoïde.",
       },
       q6: {
-        q: "Quelle architecture tumorale est la PLUS compatible avec une tumeur mal limitée, envahissant les structures adjacentes ?",
-        a: ["Nodulaire", "Malignant", "Infilitrante", "Fasciculaire"],
+        q: "Which immunohistochemical study (panel) would you propose?",
+        a: ["pan-Cytokeratin", "Melan-A", "H-caldesmon", "Desmin", "Myogenin"],
         c: 2,
         fbc: "Correct. Une tumeur infiltrante ne respecte pas les limites anatomiques normales.",
         fbw: "Faux. Une tumeur mal limitée qui envahit les tissus adjacents correspond à une architecture infiltrante.",
       },
       q_tumor: {
-        q: "Based on the zoom, what characterizes these cells?",
-        a: ["Uniform shape", "Irregular borders and nuclei", "Normal size"],
+        q: "The immunohistochemical study showed positivity for desmin and H-caldesmon. Melan-A and myogenin are negative. What diagnosis do you retain?",
+        a: [
+          "Fibrosarcoma",
+          "Melanoma",
+          "Leiomyoma",
+          "Leiomyosarcoma",
+          "Solitary fibrous tumor",
+        ],
         c: 1,
       },
     };
