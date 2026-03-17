@@ -22,29 +22,56 @@
   <body align="center">
     <!-- LOGIN CONTAINER -->
     <div id="login-container">
-      <h2 style="color: white">Patho Quest</h2>
+      <div class="glass-card">
+        <div class="logo-section">
+          <div class="flask-icon">🧪</div>
+          <h2>Patho Quest</h2>
+          <p>Laboratory Authentication Required</p>
+        </div>
 
-      <form
-        id="login-form"
-        style="display: flex; flex-direction: column; width: 300px"
-      >
-        <input
-          type="email"
-          id="email"
-          placeholder="Email"
-          required
-          style="margin: 10px; padding: 10px"
-        />
-        <input
-          type="password"
-          id="password"
-          placeholder="Password"
-          required
-          style="margin: 10px; padding: 10px"
-        />
-        <button type="submit" style="padding: 10px; margin: 10px">Login</button>
-        <p id="error-message" style="color: red; text-align: center"></p>
-      </form>
+        <form id="login-form">
+          <div class="character-selection">
+            <p class="label-text">Select Researcher</p>
+            <div class="radio-group">
+              <label class="radio-option">
+                <input type="radio" name="gender" value="man" checked />
+                <div class="option-content">
+                  <img src="assets/idel2.png" alt="Male Researcher" width="300" height="180" />
+                  <span>Male</span>
+                </div>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="gender" value="woman" />
+                <div class="option-content">
+                  <img src="assets/idel1.png" alt="Female Researcher" width="300" height="180" />
+                  <span>Female</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <input
+              type="email"
+              id="email"
+              placeholder="Email Address"
+              required
+            />
+          </div>
+
+          <div class="input-group">
+            <input
+              type="password"
+              id="password"
+              placeholder="Access Code"
+              required
+            />
+          </div>
+
+          <button type="submit" class="btn-login">Initialize Session</button>
+          <p id="error-message"></p>
+        </form>
+      </div>
     </div>
 
     <!-- GAME CONTAINER -->

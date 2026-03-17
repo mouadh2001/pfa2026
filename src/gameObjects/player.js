@@ -1,26 +1,54 @@
-// Encapsulates player creation, movement and life system
 export class PlayerController {
-  constructor(scene) {
+  constructor(scene, gender) {
     this.scene = scene;
+    this.gender = gender; // 'man' or 'woman'
     this.spawnX = 100;
     this.spawnY = 500;
     this.lives = 3;
     this.playerState = "idel";
-
-    // Track air state for landing sound
     this.wasInAir = false;
+
+    // 1. Asset Mapping: Keys must match your preload() labels
+    const characterAssets = {
+      man: {
+        images: {
+          idel: "idel_m",
+          walk: "walk_m",
+          jump: "jump_m",
+          jumpOut: "jumpOut_m",
+        },
+        sfx: { jump: "jumpSfx", land: "landSfx", run: "runSfx" },
+      },
+      woman: {
+        images: {
+          idel: "idel",
+          walk: "walk",
+          jump: "jump",
+          jumpOut: "jumpOut",
+        },
+        sfx: { jump: "jumpSfx", land: "landSfx", run: "runSfx" },
+      },
+    };
+
+    // Pick the active set based on selection (defaults to man if error)
+    this.currentAssets = characterAssets[this.gender] || characterAssets.man;
   }
 
   create() {
     const scene = this.scene;
-    // create physics-enabled player
-    scene.player = scene.physics.add.image(this.spawnX, this.spawnY, "idel");
+
+    // Create physics-enabled player using the selected idle texture
+    scene.player = scene.physics.add.image(
+      this.spawnX,
+      this.spawnY,
+      this.currentAssets.images.idel,
+    );
     scene.player.setDepth(2);
     scene.player.setScale(0.4).setCollideWorldBounds(true);
     scene.player.body.setSize(60, 160);
     scene.physics.add.collider(scene.player, scene.platforms);
 
-    // display lives
+    // Display lives
     scene.livesText = scene.add
       .text(20, 20, "Lives: " + this.lives, {
         fontSize: "22px",
@@ -29,17 +57,23 @@ export class PlayerController {
       })
       .setScrollFactor(0)
       .setDepth(2000);
-    // Initialize sound objects (allows for looping control)
+
+    // Initialize gender-specific sound objects
     this.sfx = {
-      jump: scene.sound.add("jumpSfx", { volume: 0.4 }),
-      land: scene.sound.add("landSfx", { volume: 0.3 }),
-      run: scene.sound.add("runSfx", { volume: 0.2, loop: true }),
+      jump: scene.sound.add(this.currentAssets.sfx.jump, { volume: 0.4 }),
+      land: scene.sound.add(this.currentAssets.sfx.land, { volume: 0.3 }),
+      run: scene.sound.add(this.currentAssets.sfx.run, {
+        volume: 0.2,
+        loop: true,
+      }),
     };
   }
+
   respawn() {
     this.scene.player.setPosition(this.spawnX, this.spawnY);
     this.scene.player.setVelocity(0, 0);
   }
+
   loseLife() {
     this.lives--;
     this.scene.livesText.setText("Lives: " + this.lives);
@@ -52,11 +86,14 @@ export class PlayerController {
     const scene = this.scene;
     scene.physics.pause();
     scene.popupOpen = true;
-    document.getElementById("modal-feedback").innerText = ""; // CLEAR FEEDBACK HERE
+
+    document.getElementById("modal-feedback").innerText = "";
     document.getElementById("modal-question").innerText =
       "💀 Game Over! You lost all lives.";
+
     const container = document.getElementById("modal-answers");
     container.innerHTML = "";
+
     const restartBtn = document.createElement("button");
     restartBtn.innerText = "Restart";
     restartBtn.className = "answer-btn";
@@ -69,10 +106,13 @@ export class PlayerController {
     document.getElementById("modal").style.display = "flex";
   }
 
-  setPlayerState(s) {
-    if (this.playerState === s) return;
-    this.playerState = s;
-    this.scene.player.setTexture(s);
+  setPlayerState(stateKey) {
+    if (this.playerState === stateKey) return;
+    this.playerState = stateKey;
+
+    // Use the lookup table to switch to the correct gendered image
+    const textureToSet = this.currentAssets.images[stateKey];
+    this.scene.player.setTexture(textureToSet);
   }
 
   update(cursors) {
@@ -97,16 +137,13 @@ export class PlayerController {
 
     // 2. Sound & Animation Logic
     if (!onGround) {
-      // In the air
+      // In the air: determine if jumping up or falling down
       this.setPlayerState(player.body.velocity.y < 0 ? "jump" : "jumpOut");
-      this.wasInAir = true; // Mark that we are airborne
+      this.wasInAir = true;
 
-      // Stop running sound if we jump/fall
       if (this.sfx.run.isPlaying) this.sfx.run.stop();
     } else {
       // On the ground
-
-      // Check for LANDING
       if (this.wasInAir) {
         this.sfx.land.play();
         this.wasInAir = false;
@@ -114,11 +151,9 @@ export class PlayerController {
 
       if (velocityX !== 0) {
         this.setPlayerState("walk");
-        // Start running sound if not already playing
         if (!this.sfx.run.isPlaying) this.sfx.run.play();
       } else {
         this.setPlayerState("idel");
-        // Stop running sound if standing still
         if (this.sfx.run.isPlaying) this.sfx.run.stop();
       }
 
@@ -126,7 +161,6 @@ export class PlayerController {
       if (cursors.up.isDown) {
         player.setVelocityY(-550);
         this.sfx.jump.play();
-        // Stop running sound immediately when jumping
         if (this.sfx.run.isPlaying) this.sfx.run.stop();
       }
     }

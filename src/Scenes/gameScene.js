@@ -7,6 +7,8 @@ import { EnemyManager } from "../gameObjects/enemies.js";
 import { ItemManager } from "../gameObjects/items.js";
 import { ModalUI } from "../gameObjects/modal.js";
 import { PlayerController } from "../gameObjects/player.js";
+// Get the character selection from the DOM (Ensure this is available when the script runs)
+const caracter = document.querySelector('input[name="gender"]:checked')?.value || 'man';
 
 export default class GameScene extends Phaser.Scene {
   constructor() {
@@ -16,10 +18,17 @@ export default class GameScene extends Phaser.Scene {
   preload() {
     // Load images
     this.load.image("bg", "../assets/background.png");
+    // woman
     this.load.image("idel", "../assets/idel1.png");
     this.load.image("walk", "../assets/walk1.png");
     this.load.image("jump", "../assets/jump1.png");
     this.load.image("jumpOut", "../assets/jump2.png");
+    // man
+    this.load.image("idel_m", "../assets/idel2.png");
+    this.load.image("walk_m", "../assets/walk2.png");
+    this.load.image("jump_m", "../assets/jump3.png");
+    this.load.image("jumpOut_m", "../assets/jump4.png");
+
     this.load.image("scope", "../assets/scope.png");
     this.load.image("loupe", "../assets/loupe.png");
     this.load.image("tumor", "../assets/tumeur.jpg");
@@ -39,8 +48,6 @@ export default class GameScene extends Phaser.Scene {
   }
 
   create() {
-
-
     // ===== CANVAS SCALING MONITORING =====
     console.log("📐 Game Canvas Scaling:");
     console.log(`  Game Resolution: ${this.scale.width}x${this.scale.height}`);
@@ -122,7 +129,7 @@ export default class GameScene extends Phaser.Scene {
     createPlatformRelative(this, 880, 150, 20, 300, "block"); //block platform
 
     // 3. Player
-    this.playerController = new PlayerController(this);
+    this.playerController = new PlayerController(this, caracter);
     this.playerController.create();
 
     // 4. Camera & World
@@ -139,9 +146,6 @@ export default class GameScene extends Phaser.Scene {
       right: false,
       jump: false,
     };
-
- 
-
 
     // ===== SETUP HTML BUTTON CONTROLS =====
     this.setupButtonControls();
@@ -209,8 +213,6 @@ export default class GameScene extends Phaser.Scene {
     this.playerController.update(activeCursors);
     this.enemyManager.update();
   }
-
-
 
   // ===== SETUP HTML BUTTON CONTROLS =====
   setupButtonControls() {

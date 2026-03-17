@@ -27,62 +27,73 @@ export class ModalUI {
   }
 
   openTumorMenu() {
+    if (this.tumorCooldown || this.scene.popupOpen) return;
     this.scene.popupOpen = true;
     this.scene.physics.pause();
-    const cam = this.scene.cameras.main; // Create centered UI container in SCREEN SPACE
+
+    const cam = this.scene.cameras.main;
     this.tumorUI = this.scene.add
       .container(cam.width / 2, cam.height / 2)
       .setDepth(1000);
+
+    // 1. Dark Background Overlay
     const overlay = this.scene.add
       .rectangle(
-        -cam.width / 3,
+        -cam.width / 2,
         -cam.height / 2,
         cam.width,
         cam.height,
         0x000000,
-        0.85,
+        0.7,
       )
-      .setOrigin(0); // Tumor image
-    const tumorImg = this.scene.add
-      .image(0, -50, "tumor")
-      .setScale(0.5)
-      .setInteractive({ draggable: true }); // Enable drag
+      .setOrigin(0);
 
-    this.scene.input.setDraggable(tumorImg);
-    tumorImg.on("drag", (pointer, dragX, dragY) => {
-      tumorImg.x = dragX;
-      tumorImg.y = dragY;
-    }); // Zoom
-    this.scene.input.on("wheel", (pointer, gameObjects, dx, dy) => {
-      if (!this.tumorUI) return;
-      const newScale = Phaser.Math.Clamp(
-        tumorImg.scale + (dy > 0 ? -0.05 : 0.05),
-        0.3,
-        2.5,
-      );
-      tumorImg.setScale(newScale);
-    }); // Diagnose button
-    const button = this.scene.add
-      .rectangle(0, 220, 200, 55, 0x1e90ff)
+    // 2. Open the Link in a new window immediately
+    const width = 800;
+    const height = 600;
+    const left = window.screen.width / 2 - width / 2;
+    const top = window.screen.height / 2 - height / 2;
+
+    this.tumorWindow = window.open(
+      "https://histologielv.umontpellier.fr/index.php?module=detail&vue=6&itm=199&lame=451&g=1&d=2",
+      "TumorInfo",
+      `width=${width},height=${height},top=${top},left=${left},scrollbars=yes`,
+    );
+
+    // 3. The Diagnose Button (This is the only thing visible)
+    this.diagnoseButton = this.scene.add
+      .rectangle(0, 0, 220, 60, 0x1e90ff)
       .setInteractive({ useHandCursor: true });
-    const text = this.scene.add
-      .text(0, 220, "Diagnose", {
+
+    const btnText = this.scene.add
+      .text(0, 0, "START DIAGNOSIS", {
         fontSize: "22px",
-        color: "#ffffff",
+        fill: "#fff",
         fontStyle: "bold",
       })
       .setOrigin(0.5);
-    button.on("pointerdown", () => {
-      this.closeTumorMenu();
-      this.openQCM("q_tumor");
-    });
-    this.tumorUI.add([overlay, tumorImg, button, text]);
-  }
 
+    this.diagnoseButton.on("pointerdown", () => {
+      this.closeTumorMenu();
+      this.openQCM("q_tumor"); // Trigger the questions
+    });
+
+    this.tumorUI.add([overlay, this.diagnoseButton, btnText]);
+  }
   closeTumorMenu() {
     if (!this.tumorUI) return;
-    this.scene.input.removeAllListeners("wheel");
-    this.scene.input.removeAllListeners("drag");
+
+    // Start 3-second cooldown to prevent getting "stuck"
+    this.tumorCooldown = true;
+    this.scene.time.delayedCall(3000, () => {
+      this.tumorCooldown = false;
+    });
+
+    // Close the external link window if it's still open
+    if (this.tumorWindow && !this.tumorWindow.closed) {
+      this.tumorWindow.close();
+    }
+
     this.tumorUI.destroy();
     this.tumorUI = null;
     this.scene.physics.resume();
