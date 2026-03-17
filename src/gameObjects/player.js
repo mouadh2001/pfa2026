@@ -1,7 +1,6 @@
 export class PlayerController {
   constructor(scene) {
     this.scene = scene;
-    this.gender = gender; // 'man' or 'woman'
     this.spawnX = 100;
     this.spawnY = 500;
     this.lives = 3;
