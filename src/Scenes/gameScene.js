@@ -7,8 +7,6 @@ import { EnemyManager } from "../gameObjects/enemies.js";
 import { ItemManager } from "../gameObjects/items.js";
 import { ModalUI } from "../gameObjects/modal.js";
 import { PlayerController } from "../gameObjects/player.js";
-// Get the character selection from the DOM (Ensure this is available when the script runs)
-const caracter = document.querySelector('input[name="gender"]:checked')?.value || 'man';
 
 export default class GameScene extends Phaser.Scene {
   constructor() {
@@ -75,6 +73,9 @@ export default class GameScene extends Phaser.Scene {
     this.canShowWarning = true;
     this.correctcount = 0;
     this.incorrectcount = 0;
+    // Get the character selection from the DOM (Ensure this is available when the script runs)
+    this.caracter =
+      document.querySelector('input[name="gender"]:checked')?.value || "man";
 
     this.physics.world.gravity.y = 1300;
     const worldWidth = 1320;
@@ -129,7 +130,7 @@ export default class GameScene extends Phaser.Scene {
     createPlatformRelative(this, 880, 150, 20, 300, "block"); //block platform
 
     // 3. Player
-    this.playerController = new PlayerController(this, caracter);
+    this.playerController = new PlayerController(this);
     this.playerController.create();
 
     // 4. Camera & World

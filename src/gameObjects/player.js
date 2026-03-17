@@ -1,5 +1,5 @@
 export class PlayerController {
-  constructor(scene, gender) {
+  constructor(scene) {
     this.scene = scene;
     this.gender = gender; // 'man' or 'woman'
     this.spawnX = 100;
@@ -29,9 +29,10 @@ export class PlayerController {
         sfx: { jump: "jumpSfx", land: "landSfx", run: "runSfx" },
       },
     };
-
+    console.log("Selected character:", this.scene.caracter);
     // Pick the active set based on selection (defaults to man if error)
-    this.currentAssets = characterAssets[this.gender] || characterAssets.man;
+    this.currentAssets =
+      characterAssets[this.scene.caracter] || characterAssets.man;
   }
 
   create() {
