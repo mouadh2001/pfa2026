@@ -226,3 +226,13 @@ body {
   gap: 12px; /* Space between the two buttons */
   width: 100%;
 }
+p {
+  color: aquamarine;
+  font-size: 20px;
+  text-shadow: 0 0 10px #4e54c8;
+
+  /* Prevents the text from jumping to the next line */
+  white-space: nowrap;
+  overflow: hidden;
+  display: inline-block;
+}
