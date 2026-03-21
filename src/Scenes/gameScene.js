@@ -1,4 +1,5 @@
 import LabScene from "./labScene.js";
+import PreloaderScene from "./loadingScene.js";
 import {
   createFloor,
   createPlatformRelative,
@@ -11,38 +12,6 @@ import { PlayerController } from "../gameObjects/player.js";
 export default class GameScene extends Phaser.Scene {
   constructor() {
     super({ key: "GameScene" });
-  }
-
-  preload() {
-    // Load images
-    this.load.image("bg", "../assets/background.png");
-    // woman
-    this.load.image("idel", "../assets/idel1.png");
-    this.load.image("walk", "../assets/walk1.png");
-    this.load.image("jump", "../assets/jump1.png");
-    this.load.image("jumpOut", "../assets/jump2.png");
-    // man
-    this.load.image("idel_m", "../assets/idel2.png");
-    this.load.image("walk_m", "../assets/walk2.png");
-    this.load.image("jump_m", "../assets/jump3.png");
-    this.load.image("jumpOut_m", "../assets/jump4.png");
-
-    this.load.image("scope", "../assets/scope.png");
-    this.load.image("loupe", "../assets/loupe.png");
-    this.load.image("tumor", "../assets/tumeur.jpg");
-    this.load.image("platforme", "../assets/platforme.png");
-    this.load.image("enemy", "../assets/enemy1.png");
-    this.load.image("golden", "../assets/golden.png");
-    // Load audio
-    this.load.audio("bgMusic", "../sounds/background.wav");
-    this.load.audio("jumpSfx", "../sounds/jumpin.wav");
-    this.load.audio("landSfx", "../sounds/runing.wav");
-    this.load.audio("runSfx", "../sounds/runing.wav");
-    this.load.audio("deathSfx", "../sounds/death.wav");
-    this.load.audio("correctSfx", "../sounds/correct.wav");
-    this.load.audio("wrongSfx", "../sounds/wrong.wav");
-    this.load.audio("scopeSfx", "../sounds/scope.wav");
-    this.load.audio("loupeSfx", "../sounds/loupe.mp3");
   }
 
   create() {
@@ -81,7 +50,6 @@ export default class GameScene extends Phaser.Scene {
     const worldWidth = 1320;
     // Keep world height consistent across devices (uses configured game height)
     const worldHeight = this.sys.game.config.height;
-
     //progressbar
     this.progressBar = this.add.rectangle(
       400,
@@ -153,13 +121,13 @@ export default class GameScene extends Phaser.Scene {
 
     // 5. Items & Flags
     this.itemManager = new ItemManager(this);
-    this.itemManager.addScopeRelative(400, 140, "q1", false);
+    this.itemManager.addScopeRelative(400, 140, "tumor_v", false);
     this.itemManager.addScopeRelative(550, 50, "q2", false);
     this.itemManager.addScopeRelative(700, 170, "q3", false);
     this.itemManager.addScopeRelative(100, 450, "q4", false);
     this.itemManager.addScopeRelative(1250, 450, "q6", false);
     this.itemManager.addScopeRelative(800, 450, "q5", false);
-    this.itemManager.addScopeLoopRelative(1200, 140, "tumor_v", true);
+    this.itemManager.addScopeLoopRelative(1200, 140, "q7", true);
     this.itemManager.addLoupeRelative(950, 340);
 
     // 6. Enemies
@@ -320,7 +288,7 @@ const config = {
   },
 
   // ===== SCENES =====
-  scene: [LabScene, GameScene],
+  scene: [PreloaderScene, LabScene, GameScene],
 
   // ===== AUDIO OPTIMIZATION =====
   audio: {

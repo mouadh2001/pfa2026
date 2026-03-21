@@ -80,7 +80,7 @@ function showGame() {
   // Start Phaser
   setTimeout(() => {
     startGame();
-  }, 50);
+  }, 2000);
 }
 
 // ===============================
