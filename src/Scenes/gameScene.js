@@ -135,7 +135,7 @@ export default class GameScene extends Phaser.Scene {
     this.enemyManager = new EnemyManager(this);
     this.enemyManager.createEnemyRelative(530, 330, 400, 100, "E1");
     this.enemyManager2 = new EnemyManager(this);
-    this.enemyManager2.createEnemyRelative(450, 40, 700, 100, "E2");
+    this.enemyManager2.createEnemyRelative(500, 40, 700, 100, "E2");
     this.enemyManager3 = new EnemyManager(this);
     this.enemyManager3.createEnemyRelative(210, 440, 400, 100, "E3");
     this.enemyManager4 = new EnemyManager(this);
