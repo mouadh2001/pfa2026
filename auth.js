@@ -36,9 +36,12 @@ window.addEventListener("load", () => {
 // ===============================
 // LOGIN
 // ===============================
+const button = loginForm.querySelector(".btn-login");
+
 loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-
+  button.classList.add("loading");
+  button.disabled = true;
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
   const caracter =

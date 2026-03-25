@@ -93,7 +93,7 @@ export default class GameScene extends Phaser.Scene {
     createPlatformRelative(this, 800, 410, 150, 20, "q5"); //q5 platform
     createPlatformRelative(this, 950, 410, 150, 20, "void"); //void platform
     createPlatformRelative(this, 1175, 410, 300, 20, "q7"); //q7 platform
-    createPlatformRelative(this, 880, 150, 20, 300, "block"); //block platform
+    createPlatformRelative(this, 870, 155, 20, 310, "block"); //block platform
 
     // 3. Player
     this.playerController = new PlayerController(this);
@@ -127,6 +127,7 @@ export default class GameScene extends Phaser.Scene {
     this.itemManager.addScopeRelative(800, 450, "q5", false);
     this.itemManager.addScopeLoopRelative(1200, 140, "q7", true);
     this.itemManager.addLoupeRelative(400, 140);
+    this.itemManager.addLoupeRelative(1200, 30);
 
     // 6. Enemies
     this.enemies = this.physics.add.group();
