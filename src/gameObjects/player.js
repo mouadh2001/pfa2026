@@ -28,10 +28,18 @@ export class PlayerController {
         sfx: { jump: "jumpSfx", land: "landSfx", run: "runSfx" },
       },
     };
-    console.log("Selected character:", this.scene.caracter);
+    // Get the character selection from the DOM (Ensure this is available when the script runs)
+    const character = localStorage.getItem("character");
+
+    if (!character) {
+      // prevent game from starting incorrectly
+      console.warn("No character selected!");
+      return;
+    }
+
+    // use character safely
     // Pick the active set based on selection (defaults to man if error)
-    this.currentAssets =
-      characterAssets[this.scene.caracter] || characterAssets.man;
+    this.currentAssets = characterAssets[character] || characterAssets.man;
   }
 
   create() {

@@ -42,9 +42,7 @@ export default class GameScene extends Phaser.Scene {
     this.canShowWarning = true;
     this.correctcount = 0;
     this.incorrectcount = 0;
-    // Get the character selection from the DOM (Ensure this is available when the script runs)
-    this.caracter =
-      document.querySelector('input[name="gender"]:checked')?.value || "man";
+ 
 
     this.physics.world.gravity.y = 1300;
     const worldWidth = 1320;

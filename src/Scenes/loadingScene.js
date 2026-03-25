@@ -1,9 +1,19 @@
 export default class PreloaderScene extends Phaser.Scene {
   constructor() {
-    super({"key": "PreloaderScene"});
+    super({ key: "PreloaderScene" });
   }
 
   preload() {
+    window.addEventListener("DOMContentLoaded", () => {
+      const savedCharacter = localStorage.getItem("character");
+
+      if (savedCharacter) {
+        const radio = document.querySelector(
+          `input[value="${savedCharacter}"]`,
+        );
+        if (radio) radio.checked = true;
+      }
+    });
     const width = this.cameras.main.width;
     const height = this.cameras.main.height;
 
@@ -118,5 +128,3 @@ export default class PreloaderScene extends Phaser.Scene {
     this.load.audio("loupeSfx", "../sounds/loupe.mp3");
   }
 }
-
-

@@ -41,6 +41,16 @@ loginForm.addEventListener("submit", async (e) => {
 
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
+  const caracter =
+    document.querySelector('input[name="gender"]:checked')?.value || "man";
+
+  if (!caracter) {
+    alert("Please select a character");
+    return;
+  }
+
+  // Save it
+  localStorage.setItem("character", caracter);
 
   try {
     const response = await fetch(`${API_URL}/login`, {
