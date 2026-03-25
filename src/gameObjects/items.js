@@ -17,7 +17,6 @@ export class ItemManager {
     return scope;
   }
 
-
   addScopeLoop(x, y, questionId, locked) {
     let scope = this.items.create(x, y, "golden");
     scope.setScale(0.2);
@@ -44,7 +43,6 @@ export class ItemManager {
     return this.addScope(x, y, questionId, locked);
   }
 
-
   addScopeLoopRelative(x, heightAboveFloor, questionId, locked) {
     const y = this.scene.floorY - heightAboveFloor;
     return this.addScopeLoop(x, y, questionId, locked);
@@ -56,45 +54,44 @@ export class ItemManager {
   }
 
   handleItemCollision(player, item) {
-    if (this.scene.popupOpen) return;
-    this.sfx = {
-      scope: this.scene.sound.add("scopeSfx", { volume: 0.5 }),
-      loupe: this.scene.sound.add("loupeSfx", { volume: 0.5 }),
-    };
-    if (this.scene.playerController.sfx.run.isPlaying) {
-      this.scene.playerController.sfx.run.stop();
-    }
-    // Logic: Pick up Loupe
     if (item.isLoupe) {
-      this.sfx.loupe.play();
-      this.scene.hasLoupe = true;
-      item.destroy();
-      document.getElementById("modal-feedback").innerText = ""; // CLEAR FEEDBACK HERE
-      this.scene.modal.showInfoMessage(
-        "🔍 Loupe collected! Now analyze the slide on the third platform.",
-        true,
-      );
+      // 1. Trigger the link/menu
+      this.scene.modal.openTumorMenu(item);
+
+      // 2. Disable collision immediately
+      // (disable physics, do NOT hide the sprite)
+      item.disableBody(true, false);
+      item.setAlpha(0.5);
+
+      // 3. Force re-enable after 3 seconds
+      // We use this.scene.time to ensure the game clock handles the timer
+      this.scene.time.delayedCall(
+        3000,
+        () => {
+          // Check if the item still exists to prevent console errors
+          if (item && item.scene) {
+            item.enableBody(false, item.x, item.y, true, true);
+            item.setAlpha(1);
+
+            // Optional: Add a little 'ping' or scale effect so player knows it's back
+            this.scene.tweens.add({
+              targets: item,
+              scale: 0.65,
+              duration: 100,
+              yoyo: true,
+              onComplete: () => item.setScale(0.2),
+            });
+          }
+        },
+        [],
+        this,
+      ); // Pass 'this' as the callback context
+
       return;
     }
-    // Logic: Locked Item Prevention (Show Modal Only Once)
-    if (item.locked && !this.scene.hasLoupe) {
-      if (this.scene.canShowWarning) {
-        this.scene.canShowWarning = false; // Permanent lock after first show
-        document.getElementById("modal-feedback").innerText = ""; // CLEAR FEEDBACK HERE
-        this.scene.modal.showInfoMessage(
-          "💡 This slide is too complex! You need the Loupe first.",
-          true,
-        );
-      }
-      return; // Prevent interaction
-    }
 
-    // Logic: Open Menus
+    // Logic: Standard Scopes
     this.scene.currentScope = item;
-    if (item.questionId === "tumor_v") {
-      this.scene.modal.openTumorMenu();
-    } else {
-      this.scene.modal.openQCM(item.questionId);
-    }
+    this.scene.modal.openQCM(item.questionId);
   }
 }

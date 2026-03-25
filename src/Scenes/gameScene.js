@@ -121,14 +121,14 @@ export default class GameScene extends Phaser.Scene {
 
     // 5. Items & Flags
     this.itemManager = new ItemManager(this);
-    this.itemManager.addScopeRelative(400, 140, "tumor_v", false);
+    this.itemManager.addScopeRelative(950, 340, "q1", false);
     this.itemManager.addScopeRelative(550, 50, "q2", false);
     this.itemManager.addScopeRelative(700, 170, "q3", false);
     this.itemManager.addScopeRelative(100, 450, "q4", false);
     this.itemManager.addScopeRelative(1250, 450, "q6", false);
     this.itemManager.addScopeRelative(800, 450, "q5", false);
     this.itemManager.addScopeLoopRelative(1200, 140, "q7", true);
-    this.itemManager.addLoupeRelative(950, 340);
+    this.itemManager.addLoupeRelative(400, 140);
 
     // 6. Enemies
     this.enemies = this.physics.add.group();

@@ -89,24 +89,23 @@ export default class PreloaderScene extends Phaser.Scene {
     });
 
     // 🔥 LOAD YOUR ASSETS BELOW (keep yours)
-    this.load.image("bg", "../assets/background.png");
+    this.load.image("bg", "../assets/background/background.png");
 
-    this.load.image("idel", "../assets/idel1.png");
-    this.load.image("walk", "../assets/walk1.png");
-    this.load.image("jump", "../assets/jump1.png");
-    this.load.image("jumpOut", "../assets/jump2.png");
+    this.load.image("idel", "../assets/caracters/woman/idel1.png");
+    this.load.image("walk", "../assets/caracters/woman/walk1.png");
+    this.load.image("jump", "../assets/caracters/woman/jump1.png");
+    this.load.image("jumpOut", "../assets/caracters/woman/jump2.png");
 
-    this.load.image("idel_m", "../assets/idel2.png");
-    this.load.image("walk_m", "../assets/walk2.png");
-    this.load.image("jump_m", "../assets/jump3.png");
-    this.load.image("jumpOut_m", "../assets/jump4.png");
+    this.load.image("idel_m", "../assets/caracters/man/idel2.png");
+    this.load.image("walk_m", "../assets/caracters/man/walk2.png");
+    this.load.image("jump_m", "../assets/caracters/man/jump3.png");
+    this.load.image("jumpOut_m", "../assets/caracters/man/jump4.png");
 
-    this.load.image("scope", "../assets/scope.png");
-    this.load.image("loupe", "../assets/loupe.png");
-    this.load.image("tumor", "../assets/tumeur.jpg");
-    this.load.image("platforme", "../assets/platforme.png");
-    this.load.image("enemy", "../assets/enemy1.png");
-    this.load.image("golden", "../assets/golden.png");
+    this.load.image("scope", "../assets/items/scope.png");
+    this.load.image("loupe", "../assets/items/loupe.png");
+    this.load.image("platforme", "../assets/items/platforme.png");
+    this.load.image("enemy", "../assets/enemy/enemy1.png");
+    this.load.image("golden", "../assets/items/golden.png");
 
     this.load.audio("bgMusic", "../sounds/background.wav");
     this.load.audio("jumpSfx", "../sounds/jumpin.wav");

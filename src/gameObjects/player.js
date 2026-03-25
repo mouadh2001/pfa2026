@@ -36,7 +36,7 @@ export class PlayerController {
 
   create() {
     const scene = this.scene;
-
+    console.log(this.currentAssets);
     // Create physics-enabled player using the selected idle texture
     scene.player = scene.physics.add.image(
       this.spawnX,

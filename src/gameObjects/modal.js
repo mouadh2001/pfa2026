@@ -27,112 +27,69 @@ export class ModalUI {
     }
   }
 
-  openTumorMenu() {
+  openTumorMenu(scope) {
+    // Prevent spamming if a window is already open or in cooldown
     if (this.tumorCooldown || this.scene.popupOpen) return;
 
-    // Standard behavior: Pause game and block scope
-    this.scene.popupOpen = true;
-    this.scene.physics.pause();
-
-    const cam = this.scene.cameras.main;
-    this.tumorUI = this.scene.add
-      .container(cam.width / 2, cam.height / 2)
-      .setDepth(1000);
-
-    // 1. Dark Background Overlay (keeps scope disabled)
-    const overlay = this.scene.add
-      .rectangle(
-        -cam.width / 2,
-        -cam.height / 2,
-        cam.width,
-        cam.height,
-        0x000000,
-        0.7,
-      )
-      .setOrigin(0);
-
-    // 2. Open the Link immediately
     const width = 800;
     const height = 600;
     const left = window.screen.width / 2 - width / 2;
     const top = window.screen.height / 2 - height / 2;
 
+    // 1. Open the Link immediately
     this.tumorWindow = window.open(
-      "https://histologielv.umontpellier.fr/index.php?module=detail&vue=6&itm=199&lame=451&g=1&d=2",
+      "https://tumourclassification.iarc.who.int/Viewer/Index2?fid=23191",
       "TumorInfo",
       `width=${width},height=${height},top=${top},left=${left},scrollbars=yes`,
     );
 
-    // 3. Prepare Button - Content depends on status
-    const isSolved = this.tumorSolved; // Check your flag
-    const label = isSolved ? "CLOSE VIEW" : "START DIAGNOSIS";
-    const btnColor = isSolved ? 0x4caf50 : 0x1e90ff; // Green if solved, Blue if not
+    // 2. Handle Cooldown & Logic
+    // We disable the scope temporarily so the player doesn't trigger it 60 times a second
+    if (scope) {
+      this.tumorCooldown = true;
+      scope.setAlpha(0.3); // Visual feedback that it's "used"
 
-    this.diagnoseButton = this.scene.add
-      .rectangle(0, 0, 220, 60, btnColor)
-      .setInteractive({ useHandCursor: true });
+      // Disable physics body so they can walk past it
+      scope.disableBody(true, false);
 
-    const btnText = this.scene.add
-      .text(0, 0, label, {
-        fontSize: "22px",
-        fill: "#fff",
-        fontStyle: "bold",
-      })
-      .setOrigin(0.5);
-
-    // 4. Button Logic
-    this.diagnoseButton.on("pointerdown", () => {
-      this.closeTumorMenu();
-      const scope = this.scene.currentScope;
-      if (scope) {
-        // Disable physics + interaction
-        scope.disableBody(true, true);
-        // Optional: visual feedback (fade out)
-        scope.setAlpha(0.3);
-        // Re-enable after 3 seconds
-        this.scene.time.delayedCall(3000, () => {
-          scope.enableBody(false, scope.x, scope.y, true, true);
-          scope.setAlpha(1);
-        });
-      }
-
-      // Only open QCM if it hasn't been solved yet
-      if (!isSolved) {
-        this.openQCM("q_tumor");
-      }
-    });
-
-    this.tumorUI.add([overlay, this.diagnoseButton, btnText]);
+      // Re-enable after 3 seconds
+      this.scene.time.delayedCall(3000, () => {
+        this.tumorCooldown = false;
+        scope.setAlpha(1);
+        scope.enableBody(false, scope.x, scope.y, true, true);
+      });
+    }
   }
+
   closeTumorMenu() {
-    if (!this.tumorUI) return;
-
-    // Start 3-second cooldown to prevent getting "stuck"
-    this.tumorCooldown = true;
-    this.scene.time.delayedCall(3000, () => {
-      this.tumorCooldown = false;
-    });
-
-    // Close the external link window if it's still open
+    // Since there is no in-game UI anymore, this just cleans up the window
     if (this.tumorWindow && !this.tumorWindow.closed) {
       this.tumorWindow.close();
     }
-
-    this.tumorUI.destroy();
-    this.tumorUI = null;
-    this.scene.physics.resume();
-    this.scene.popupOpen = false;
   }
 
   openQCM(id) {
     this.scene.popupOpen = true;
+    // Safe stop within the modal
+    if (this.scene.playerController?.sfx?.run?.isPlaying) {
+      this.scene.playerController.sfx.run.stop();
+    }
+    this.scene.physics.pause();
+    // Use a unique name for modal sounds so they don't overwrite player sounds
+    this.modalSfx = {
+      correct: this.scene.sound.add("correctSfx", { volume: 0.5 }),
+      wrong: this.scene.sound.add("wrongSfx", { volume: 0.5 }),
+    };
+    this.scene.popupOpen = true;
+    if (this.scene.playerController.sfx.run.isPlaying)
+      this.scene.playerController.sfx.run.stop();
     this.scene.physics.pause();
     this.sfx = {
       correct: this.scene.sound.add("correctSfx", { volume: 0.5 }),
       wrong: this.scene.sound.add("wrongSfx", { volume: 0.5 }),
     };
     const questions = {
-      q_tumor: {
+      q1: {
         q: "What is the pattern of this tumor ?",
         a: [
           "Myxoid",
@@ -144,16 +101,25 @@ export class ModalUI {
         c: [1],
         feedbacks: [
           {
-            text: "Too loose stroma.",
-            img: "../assets/tumeur.jpg",
+            text: "Oups! It is not a myxoid tumor. A myxoid tumor is caracterised by a gelatinous material produced by soft tissue cells. It resembles epithelial mucin, but is not as thick (looks like watered-down mucin – it is not as blue or stringy). This is a myxoid pattern : ",
+            imgs: ["../assets/tumeurs/q1ra.jpg"],
           },
           {
-            text: "Elongated cells = spindle.",
-            img: "../assets/tumeur.jpg",
+            text: "True! It is a fusiform tumor.Fusiform (spindle) cells are elongated and have tapered (pointed) ends. Usually both the nucleus and cytoplasm are elongated, but the term still applies for cells with spindle-shaped cytoplasmic outline but rounded (or only slightly oval) nucleus.“Fusiform” is derived from the Latin “fusus” meaning “spindle” ",
+            imgs: ["../assets/tumeurs/q1rb.jpg"],
           },
-          { text: "Round cells absent." },
-          { text: "No marked pleomorphism." },
-          { text: "No polygonal cells." },
+          {
+            text: "Oups! It is not a round cell tumorA round cell tumor is caracterised by round cells with often uniform round nuclei and increased nuclear-cytoplasmic ratio",
+            imgs: [],
+          },
+          {
+            text: "Oups! It is not a pleomorphic tumor A Pleomorphic tumor cells is caracterised by marked variation in size and shape, often including very large and bizarre forms. ",
+            imgs: [],
+          },
+          {
+            text: "Oups! It is not an epithélioid tumor An epithélioid tumor is caracterised by cells resemble epithelial cells with a rounded or polygonal appearance and at least moderate amounts of cytoplasm qnd and well-defined cell borders. ",
+            imgs: [],
+          },
         ],
       },
 
@@ -162,11 +128,29 @@ export class ModalUI {
         a: ["Plexiform", "Fascicular", "Storiform", "Lobulated", "Whorled"],
         c: [1],
         feedbacks: [
-          { text: "No network-like growth." },
-          { text: "Bundles of cells." },
-          { text: "No cartwheel pattern." },
-          { text: "Not lobulated." },
-          { text: "No circular arrangement." },
+          {
+            text: "Oups! It is not a plexiform pattern A plexiform pattern is characterised by an  interwoven network. It resembles plexus or a network or even a bag of worms",
+            imgs: [
+              "../assets/tumeurs/q2ra1.jpg",
+              "../assets/tumeurs/q2ra2.jpg",
+            ],
+          },
+          {
+            text: "True! It is a fascicular pattern. A fascicular pattern is characterised byspindled cells arranged in long fascicles ",
+            imgs: [],
+          },
+          {
+            text: "Oups! It is not a storiform patternshort fascicles of spindle cells that intersect or intertwine at various angles thereby resembling the weaving of a doormat or starburst. ",
+            imgs: ["../assets/tumeurs/q2rc.jpg", "../assets/tumeurs/q2rc2.jpg"],
+          },
+          {
+            text: "Oups! It is not a lobulated patternA lobuled pattern is referring to an anatomic unit (as in breast lobule). A lobulated tumor is characterised by clusters or nodules with smooth (non-infiltrative) contour, often separated by fibrous bands or stroma conforming to or resembling normal anatomic structures. Sometimes used synonymously with nodular. ",
+            imgs: ["../assets/tumeurs/q2rd.jpg"],
+          },
+          {
+            text: "Oups! It is not a whorled patternA whorled pattern is characterised by a wirled arrangement of cells. ",
+            imgs: ["../assets/tumeurs/q2re.jpg"],
+          },
         ],
       },
 
@@ -179,13 +163,28 @@ export class ModalUI {
           "Prominent or distinctive blood vessels",
           "Scant stroma",
         ],
-        c: [3], // you can change to [3,4] if needed
+        c: [4],
         feedbacks: [
-          { text: "Cells dominate here." },
-          { text: "Not schwannian." },
-          { text: "Matrix not gelatinous." },
-          { text: "Notice vessels." },
-          { text: "Look again." },
+          {
+            text: "Oups! There is not a prominent inflammatory infiltrate in this tumor  ",
+            imgs: [],
+          },
+          {
+            text: "Oups! There is not a nuclear palissading in this tumornuclear palissading is characterised by nuclei lining up in parallel arrays; resembling a picket fence. Etymology: French palissade, a fence of stakes. ",
+            imgs: [
+              "../assets/tumeurs/q3rb1.jpg",
+              "../assets/tumeurs/q3rb2.jpg",
+            ],
+          },
+          {
+            text: "Oups! There is not a Myxoïd stroma in this tumorA myxoid stroma is caracterised by a gelatinous material produced by soft tissue cells. It resembles epithelial mucin, but is not as thick (looks like watered-down mucin – it is not as blue or stringy). This is a myxoid stroma in a low grade fibromyxoid sarcoma.",
+            imgs: ["../assets/tumeurs/q3rc.jpg"],
+          },
+          {
+            text: "Oups! There is not a prominent or distinctive  blood vessels in this tumor  ",
+            imgs: [],
+          },
+          { text: "True! The stroma is scant ", imgs: [] },
         ],
       },
 
@@ -198,13 +197,13 @@ export class ModalUI {
           "Mitotic figures",
           "Nuclear atypia",
         ],
-        c: [2, 3, 4], // 🔥 MULTIPLE correct answers
+        c: [2, 3, 4],
         feedbacks: [
-          { text: "No abrupt necrosis." },
-          { text: "Not hyaline type." },
-          { text: "Yes — single cell necrosis." },
-          { text: "Yes — mitoses present." },
-          { text: "Yes — atypia visible." },
+          { text: "No abrupt necrosis.", imgs: [] },
+          { text: "Not hyaline type.", imgs: [] },
+          { text: "Yes — single cell necrosis.", imgs: [] },
+          { text: "Yes — mitoses present.", imgs: [] },
+          { text: "Yes — atypia visible.", imgs: [] },
         ],
       },
 
@@ -219,24 +218,24 @@ export class ModalUI {
         ],
         c: [0],
         feedbacks: [
-          { text: "Correct! Smooth muscle.", img: "../assets/tumeur.jpg" },
-          { text: "No striations." },
-          { text: "No S100 pattern." },
-          { text: "No endothelial lining." },
-          { text: "Look again." },
+          { text: "Correct! Smooth muscle.", imgs: [] },
+          { text: "No striations.", imgs: [] },
+          { text: "No S100 pattern.", imgs: [] },
+          { text: "No endothelial lining.", imgs: [] },
+          { text: "Look again.", imgs: [] },
         ],
       },
 
       q6: {
         q: "Which immunohistochemical study (panel) would you propose?",
         a: ["pan-Cytokeratin", "Melan-A", "H-caldesmon", "Desmin", "Myogenin"],
-        c: [2, 3], // 🔥 MULTIPLE answers
+        c: [2, 3],
         feedbacks: [
-          { text: "CK is negative." },
-          { text: "Melan-A irrelevant." },
-          { text: "Correct! Smooth muscle marker." },
-          { text: "Correct! Muscle marker." },
-          { text: "Myogenin negative." },
+          { text: "CK is negative.", imgs: [] },
+          { text: "Melan-A irrelevant.", imgs: [] },
+          { text: "Correct! Smooth muscle marker.", imgs: [] },
+          { text: "Correct! Muscle marker.", imgs: [] },
+          { text: "Myogenin negative.", imgs: [] },
         ],
       },
 
@@ -251,14 +250,14 @@ export class ModalUI {
         ],
         c: [3],
         feedbacks: [
-          { text: "Markers don’t match." },
-          { text: "Melan-A negative." },
-          { text: "Benign? No atypia says otherwise." },
+          { text: "Markers don’t match.", imgs: [] },
+          { text: "Melan-A negative.", imgs: [] },
+          { text: "Benign? No atypia says otherwise.", imgs: [] },
           {
             text: "Malignant smooth muscle tumor.",
-            img: "../assets/tumeur.jpg",
+            imgs: [],
           },
-          { text: "Not SFT." },
+          { text: "Not SFT.", imgs: [] },
         ],
       },
     };
@@ -297,12 +296,23 @@ export class ModalUI {
         feedback.innerText =
           fb?.text || (isCorrect ? "Correct!" : "Incorrect!");
 
-        // 🖼️ Show feedback IMAGE (if exists)
-        if (fb?.img) {
-          feedbackImg.src = fb.img;
-          feedbackImg.style.display = "block";
+        const feedbackImagesContainer =
+          document.getElementById("feedback-images");
+
+        // 🖼️ Show feedback IMAGES
+        feedbackImagesContainer.innerHTML = ""; // clear previous
+
+        if (fb?.imgs && fb.imgs.length > 0) {
+          fb.imgs.forEach((imgPath) => {
+            const img = document.createElement("img");
+            img.src = imgPath;
+            img.style.display = "block";
+            img.style.maxWidth = "200px"; // optional styling
+            img.style.margin = "5px";
+            feedbackImagesContainer.appendChild(img);
+          });
         } else {
-          feedbackImg.style.display = "none";
+          feedbackImagesContainer.innerHTML = ""; // nothing to show
         }
 
         if (isCorrect) {
@@ -325,9 +335,11 @@ export class ModalUI {
 
           // If ALL correct answers selected → success
           if (this.selectedCorrect.size === data.c.length) {
-            this.scene.time.delayedCall(2500, () => {
+            this.scene.time.delayedCall(15000, () => {
               this.handleSuccess(id);
               this.closeModal();
+              feedbackImagesContainer.innerHTML = ""; // nothing to show
+
               this.selectedCorrect = null;
             });
           } else {
@@ -343,8 +355,9 @@ export class ModalUI {
 
           feedback.style.color = "#ed9f18";
 
-          this.scene.time.delayedCall(2500, () => {
+          this.scene.time.delayedCall(15000, () => {
             this.closeModal();
+            feedbackImagesContainer.innerHTML = ""; // nothing to show
 
             this.scene.playerController.respawn();
             this.scene.incorrectcount++;
@@ -371,32 +384,18 @@ export class ModalUI {
   // Helper to handle the platform movements
   handleSuccess(id) {
     const scope = this.scene.currentScope;
-    if (id === "q_tumor") {
-      this.tumorSolved = true; // Set tumor solved flag
-    }
-    // 🎯 Special case: tumor_v
-    if (id === "q_tumor") {
-      if (scope) {
-        // Disable physics + interaction
-        scope.disableBody(true, true);
-        // Optional: visual feedback (fade out)
-        scope.setAlpha(0.3);
-        // Re-enable after 3 seconds
-        this.scene.time.delayedCall(3000, () => {
-          scope.enableBody(false, scope.x, scope.y, true, true);
-          scope.setAlpha(1);
-        });
-      }
-    } else {
-      // Default behavior → destroy scope
-      if (scope) scope.destroy();
+
+    // Default behavior → destroy scope
+    if (scope) {
+      scope.destroy();
+      this.scene.currentScope = null; // 🔥 important
     }
     // ✅ Platform logic stays unchanged
     const passPlatform = this.scene.platforms
       .getChildren()
       .find((p) => p.id === "pass");
     if (passPlatform && passPlatform.y !== this.scene.floorY - 190) {
-      passPlatform.y -= 20;
+      passPlatform.y -= 30;
       passPlatform.refreshBody();
     }
     if (id === "q6") {
@@ -421,7 +420,7 @@ export class ModalUI {
     <div class="modal-content">
       <h2 id="modal-question"></h2>
       <div id="modal-feedback"></div>
-      <img id="modal-image" style="max-width:200px; margin:10px auto; display:none;" />
+      <div id="feedback-images" style="display:flex; flex-wrap:no-wrap; justify-content:center;"></div>
       <div id="modal-answers"></div>
       <div id="modal-message"></div>
     </div>
