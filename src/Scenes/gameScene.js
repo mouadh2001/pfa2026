@@ -8,6 +8,7 @@ import { EnemyManager } from "../gameObjects/enemies.js";
 import { ItemManager } from "../gameObjects/items.js";
 import { ModalUI } from "../gameObjects/modal.js";
 import { PlayerController } from "../gameObjects/player.js";
+import { StatsService } from "../../statsService.js";
 
 export default class GameScene extends Phaser.Scene {
   constructor() {
@@ -35,6 +36,7 @@ export default class GameScene extends Phaser.Scene {
     this.scale.on("orientationchange", (orientation) => {
       console.log(`📱 Orientation Changed: ${orientation}`);
     });
+    this.StatsService = new StatsService();
 
     // shared globals
     this.popupOpen = false;
@@ -42,7 +44,6 @@ export default class GameScene extends Phaser.Scene {
     this.canShowWarning = true;
     this.correctcount = 0;
     this.incorrectcount = 0;
- 
 
     this.physics.world.gravity.y = 1300;
     const worldWidth = 1320;
@@ -50,16 +51,19 @@ export default class GameScene extends Phaser.Scene {
     const worldHeight = this.sys.game.config.height;
     //progressbar
     this.progressBar = this.add.rectangle(
-      400,
+      380,
       30,
       this.correctcount,
       20,
       0x00ff00,
     );
+
+    // 3. Set origin to the LEFT-CENTER.
+    // This anchors the left side at X=400.
+    this.progressBar.setScrollFactor(0);
     this.progressBar.setOrigin(0, 0.5);
     this.progressBar.setDepth(2000);
     //Savois acquis
-
     this.savois = this.add
       .text(150, 20, "|  Savoir acquis:", {
         fontSize: "22px",
@@ -68,6 +72,14 @@ export default class GameScene extends Phaser.Scene {
       })
       .setScrollFactor(0)
       .setDepth(2000);
+    // this.score = this.add
+    //   .text(540, 20, "| Score:" + this.stats.score, {
+    //     fontSize: "22px",
+    //     fill: "#ffffff",
+    //     fontStyle: "bold",
+    //   })
+    //   .setScrollFactor(0)
+    //   .setDepth(2000);
 
     // 1. Background
     let bg = this.add.image(0, 0, "bg").setOrigin(0, 0);

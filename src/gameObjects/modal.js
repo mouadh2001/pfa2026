@@ -325,10 +325,6 @@ export class ModalUI {
 
           feedback.style.color = "#166534";
 
-          // Score update
-          this.scene.correctcount += 20;
-          this.scene.progressBar.width = this.scene.correctcount;
-
           // 🔥 MULTIPLE ANSWERS SUPPORT
           if (!this.selectedCorrect) this.selectedCorrect = new Set();
           this.selectedCorrect.add(i);
@@ -373,6 +369,7 @@ export class ModalUI {
               this.scene.enemyManager.increaseEnemySpeedByName("E4", 50);
             }
           });
+          this.scene.StatsService.addIncorrect();
         }
       };
       container.appendChild(b);
@@ -383,6 +380,11 @@ export class ModalUI {
 
   // Helper to handle the platform movements
   handleSuccess(id) {
+    this.scene.StatsService.addCorrect();
+    // Score update
+    this.scene.correctcount += 20;
+    this.scene.progressBar.width = this.scene.correctcount;
+ 
     const scope = this.scene.currentScope;
 
     // Default behavior → destroy scope

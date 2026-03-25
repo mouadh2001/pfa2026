@@ -66,6 +66,7 @@ export class PlayerController {
       .setScrollFactor(0)
       .setDepth(2000);
 
+      
     // Initialize gender-specific sound objects
     this.sfx = {
       jump: scene.sound.add(this.currentAssets.sfx.jump, { volume: 0.4 }),
