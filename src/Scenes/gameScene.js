@@ -9,6 +9,7 @@ import { ItemManager } from "../gameObjects/items.js";
 import { ModalUI } from "../gameObjects/modal.js";
 import { PlayerController } from "../gameObjects/player.js";
 import { StatsService } from "../../statsService.js";
+import { level1Questions } from "../data/level1Questions.js";
 
 export default class GameScene extends Phaser.Scene {
   constructor() {
@@ -44,6 +45,13 @@ export default class GameScene extends Phaser.Scene {
     this.canShowWarning = true;
     this.correctcount = 0;
     this.incorrectcount = 0;
+    
+    // Set level data
+    this.levelData = level1Questions;
+    
+    // Register event listeners for modal interactions
+    this.events.on('qcm_success', this.handleQCMSuccess, this);
+    this.events.on('qcm_wrong', this.handleQCMWrong, this);
 
     this.physics.world.gravity.y = 1300;
     const worldWidth = 1320;
@@ -72,14 +80,14 @@ export default class GameScene extends Phaser.Scene {
       })
       .setScrollFactor(0)
       .setDepth(2000);
-    // this.score = this.add
-    //   .text(540, 20, "| Score:" + this.stats.score, {
-    //     fontSize: "22px",
-    //     fill: "#ffffff",
-    //     fontStyle: "bold",
-    //   })
-    //   .setScrollFactor(0)
-    //   .setDepth(2000);
+    this.scoreText = this.add
+      .text(540, 20, "| Score: " + this.StatsService.getScore(), {
+        fontSize: "22px",
+        fill: "#ffffff",
+        fontStyle: "bold",
+      })
+      .setScrollFactor(0)
+      .setDepth(2000);
 
     // 1. Background
     let bg = this.add.image(0, 0, "bg").setOrigin(0, 0);
@@ -131,15 +139,22 @@ export default class GameScene extends Phaser.Scene {
 
     // 5. Items & Flags
     this.itemManager = new ItemManager(this);
-    this.itemManager.addScopeRelative(950, 340, "q1", false);
-    this.itemManager.addScopeRelative(550, 50, "q2", false);
-    this.itemManager.addScopeRelative(700, 170, "q3", false);
-    this.itemManager.addScopeRelative(100, 450, "q4", false);
-    this.itemManager.addScopeRelative(1250, 450, "q6", false);
-    this.itemManager.addScopeRelative(800, 450, "q5", false);
+    this.itemManager.addScopeRelative(950, 340, "q6", false);
+    this.itemManager.addScopeRelative(550, 50, "q1", false);
+    this.itemManager.addScopeRelative(700, 170, "q2", false);
+    this.itemManager.addScopeRelative(100, 450, "q3", false);
+    this.itemManager.addScopeRelative(1250, 450, "q5", false);
+    this.itemManager.addScopeRelative(800, 450, "q4", false);
     this.itemManager.addScopeLoopRelative(1200, 140, "q7", true);
     this.itemManager.addLoupeRelative(400, 140);
     this.itemManager.addLoupeRelative(1200, 30);
+
+    // Hide all question scopes except q1 initially
+    this.itemManager.items.getChildren().forEach(item => {
+      if (!item.isLoupe && item.questionId !== "q1") {
+        item.disableBody(true, true);
+      }
+    });
 
     // 6. Enemies
     this.enemies = this.physics.add.group();
@@ -240,6 +255,86 @@ export default class GameScene extends Phaser.Scene {
         controlsPanel.style.display = "none";
       }
     });
+  }
+
+  // ===== LEVEL SPECIFIC DOMAIN LOGIC =====
+  handleQCMSuccess(id) {
+    this.StatsService.addCorrect(id);
+    if (this.scoreText) {
+      this.scoreText.setText("| Score: " + this.StatsService.getScore());
+    }
+    // Score update
+    this.correctcount += 20;
+    this.progressBar.width = this.correctcount;
+
+    // Sequence for questions
+    const sequence = ["q1", "q2", "q3", "q4", "q5", "q6", "q7"];
+    const currentIndex = sequence.indexOf(id);
+    if (currentIndex !== -1 && currentIndex < sequence.length - 1) {
+      const nextId = sequence[currentIndex + 1];
+      const nextScope = this.itemManager.items.getChildren().find(item => item.questionId === nextId);
+      if (nextScope) {
+        // Re-enable and show the next scope
+        nextScope.enableBody(false, nextScope.x, nextScope.y, true, true);
+        
+        // Add a slight ping effect
+        this.tweens.add({
+          targets: nextScope,
+          scale: 0.3,
+          duration: 300,
+          yoyo: true,
+          onComplete: () => nextScope.setScale(0.2),
+        });
+      }
+    } else if (id === "q7") {
+      // Level completed! Push stats.
+      console.log("🎉 Level Complete! Pushing stats...");
+      this.StatsService.pushStats();
+      this.modal.showInfoMessage("🎉 Level Complete! Your stats have been saved.", true, 3000);
+    }
+ 
+    const scope = this.currentScope;
+
+    // Default behavior → destroy scope
+    if (scope) {
+      scope.destroy();
+      this.currentScope = null; // 🔥 important
+    }
+    // ✅ Platform logic stays unchanged
+    const passPlatform = this.platforms
+      .getChildren()
+      .find((p) => p.id === "pass");
+    if (passPlatform && passPlatform.y !== this.floorY - 190) {
+      passPlatform.y -= 30;
+      passPlatform.refreshBody();
+    }
+    if (id === "q5") {
+      const voidPlatform = this.platforms
+        .getChildren()
+        .find((p) => p.id === "void");
+      if (voidPlatform) voidPlatform.destroy();
+    }
+  }
+
+  handleQCMWrong(id) {
+    this.playerController.respawn();
+    this.incorrectcount++;
+
+    if (this.incorrectcount == 1) {
+      this.enemyManager.increaseEnemySpeedByName("E1", 50);
+      this.enemyManager.increaseEnemySpeedByName("E5", 50);
+    } else if (this.incorrectcount == 2) {
+      this.enemyManager.duplicateEnemyByName("E1", "E5");
+    } else if (this.incorrectcount == 3) {
+      this.enemyManager.increaseEnemySpeedByName("E3", 50);
+    } else if (this.incorrectcount == 4) {
+      this.enemyManager.increaseEnemySpeedByName("E4", 50);
+    }
+    
+    this.StatsService.addIncorrect(id);
+    if (this.scoreText) {
+      this.scoreText.setText("| Score: " + this.StatsService.getScore());
+    }
   }
 }
 

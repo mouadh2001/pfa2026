@@ -92,6 +92,12 @@ export class ItemManager {
 
     // Logic: Standard Scopes
     this.scene.currentScope = item;
-    this.scene.modal.openQCM(item.questionId);
+    const questionData = this.scene.levelData ? this.scene.levelData[item.questionId] : null;
+    if (questionData) {
+      this.scene.StatsService.startQuestion(item.questionId);
+      this.scene.modal.openQCM(item.questionId, questionData);
+    } else {
+      console.warn(`No question data found for id: ${item.questionId}`);
+    }
   }
 }
