@@ -4,6 +4,8 @@ export class ModalUI {
     this.scene = scene;
     this.tumorUI = null;
     this.tumorSolved = false;
+    this.sfx = null;
+    this.selectedCorrect = null;
   }
 
   showInfoMessage(message, autoClose = true, delay = 1500) {
@@ -46,7 +48,6 @@ export class ModalUI {
         "TumorInfo",
         `width=${width},height=${height},top=${top},left=${left},scrollbars=yes`,
       );
-
     }
 
     // 2. Handle Cooldown & Logic
@@ -76,24 +77,18 @@ export class ModalUI {
 
   openQCM(id, data) {
     this.scene.popupOpen = true;
-    // Safe stop within the modal
     if (this.scene.playerController?.sfx?.run?.isPlaying) {
       this.scene.playerController.sfx.run.stop();
     }
     this.scene.physics.pause();
-    // Use a unique name for modal sounds so they don't overwrite player sounds
-    this.modalSfx = {
-      correct: this.scene.sound.add("correctSfx", { volume: 0.5 }),
-      wrong: this.scene.sound.add("wrongSfx", { volume: 0.5 }),
-    };
-    this.scene.popupOpen = true;
-    if (this.scene.playerController.sfx.run.isPlaying)
-      this.scene.playerController.sfx.run.stop();
-    this.scene.physics.pause();
-    this.sfx = {
-      correct: this.scene.sound.add("correctSfx", { volume: 0.5 }),
-      wrong: this.scene.sound.add("wrongSfx", { volume: 0.5 }),
-    };
+
+    if (!this.sfx) {
+      this.sfx = {
+        correct: this.scene.sound.add("correctSfx", { volume: 0.5 }),
+        wrong: this.scene.sound.add("wrongSfx", { volume: 0.5 }),
+      };
+    }
+    this.selectedCorrect = new Set();
     const modal = document.getElementById("modal");
     const questionText = document.getElementById("modal-question");
     const container = document.getElementById("modal-answers");
@@ -157,8 +152,6 @@ export class ModalUI {
 
           feedback.style.color = "#166534";
 
-          // 🔥 MULTIPLE ANSWERS SUPPORT
-          if (!this.selectedCorrect) this.selectedCorrect = new Set();
           this.selectedCorrect.add(i);
 
           // If ALL correct answers selected → success
@@ -209,12 +202,14 @@ export class ModalUI {
     modal.style.display = "flex";
   }
 
-
-
   closeModal() {
-    document.getElementById("modal").style.display = "none";
+    const modal = document.getElementById("modal");
+    if (modal) {
+      modal.style.display = "none";
+    }
     this.scene.physics.resume();
     this.scene.popupOpen = false;
+    this.selectedCorrect = null;
   }
 
   createHTMLModal() {

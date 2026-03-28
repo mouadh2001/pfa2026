@@ -8,7 +8,7 @@ export class StatsService {
     };
 
     // Tracks individual question attempts only
-    this.questionStats = {}; 
+    this.questionStats = {};
     this.currentQuestionId = null;
     this.gameStartTime = Date.now();
   }
@@ -18,7 +18,7 @@ export class StatsService {
     if (!this.questionStats[id]) {
       this.questionStats[id] = {
         attempts: 0,
-        solved: false
+        solved: false,
       };
     }
     this.currentQuestionId = id;
@@ -28,22 +28,25 @@ export class StatsService {
   addIncorrect(id) {
     const qId = id || this.currentQuestionId;
     if (this.questionStats[qId] && !this.questionStats[qId].solved) {
-        this.questionStats[qId].attempts++;
+      this.questionStats[qId].attempts++;
     }
-    
+
     this.stats.incorrect++;
-    console.log(`❌ ${qId} Incorrect, total attempts: ${this.questionStats[qId]?.attempts}`, this.getStats());
+    console.log(
+      `❌ ${qId} Incorrect, total attempts: ${this.questionStats[qId]?.attempts}`,
+      this.getStats(),
+    );
   }
 
   // Call on correct answer
   addCorrect(id) {
     const qId = id || this.currentQuestionId;
     let attempts = 1;
-    
+
     if (this.questionStats[qId] && !this.questionStats[qId].solved) {
-        this.questionStats[qId].attempts++;
-        attempts = this.questionStats[qId].attempts;
-        this.questionStats[qId].solved = true;
+      this.questionStats[qId].attempts++;
+      attempts = this.questionStats[qId].attempts;
+      this.questionStats[qId].solved = true;
     }
 
     let points = this.calculatePoints(attempts);
@@ -80,16 +83,16 @@ export class StatsService {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": token
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           score: finalStats.score,
           correct: finalStats.correct,
           incorrect: finalStats.incorrect,
-          time: finalStats.time
-        })
+          time: finalStats.time,
+        }),
       });
-      
+
       if (!response.ok) {
         throw new Error(`Server returned ${response.status}`);
       }
@@ -103,10 +106,12 @@ export class StatsService {
 
   getStats() {
     // Calculate full time played right when stats are requested, in seconds.
-    this.stats.time = Number(((Date.now() - this.gameStartTime) / 1000).toFixed(1));
+    this.stats.time = Number(
+      ((Date.now() - this.gameStartTime) / 1000).toFixed(1),
+    );
     return this.stats;
   }
-  
+
   getQuestionStats() {
     return this.questionStats;
   }

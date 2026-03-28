@@ -9,7 +9,7 @@ import { ItemManager } from "../gameObjects/items.js";
 import { ModalUI } from "../gameObjects/modal.js";
 import { PlayerController } from "../gameObjects/player.js";
 import { StatsService } from "../../statsService.js";
-import { level1Questions } from "../data/level1Questions.js";
+import { LEVELS } from "../data/levelConfigs.js";
 
 export default class GameScene extends Phaser.Scene {
   constructor() {
@@ -17,26 +17,12 @@ export default class GameScene extends Phaser.Scene {
   }
 
   create() {
-    // ===== CANVAS SCALING MONITORING =====
-    console.log("📐 Game Canvas Scaling:");
-    console.log(`  Game Resolution: ${this.scale.width}x${this.scale.height}`);
-    console.log(
-      `  Display Size: ${this.cameras.main.displayWidth}x${this.cameras.main.displayHeight}`,
-    );
-    console.log(`  Device Pixel Ratio: ${window.devicePixelRatio}`);
-    console.log(
-      `  Canvas Size: ${this.game.canvas.width}x${this.game.canvas.height}`,
-    );
-    console.log(`  Viewport: ${window.innerWidth}x${window.innerHeight}`);
-
-    // Listen for scale changes
-    this.scale.on("resize", (gameSize) => {
-      console.log(`📐 Canvas Resized: ${gameSize.width}x${gameSize.height}`);
-    });
-
-    this.scale.on("orientationchange", (orientation) => {
+    this.onScaleResize = this.resize.bind(this);
+    this.onOrientationChange = (orientation) => {
       console.log(`📱 Orientation Changed: ${orientation}`);
-    });
+    };
+    this.scale.on("resize", this.onScaleResize);
+    this.scale.on("orientationchange", this.onOrientationChange);
     this.StatsService = new StatsService();
 
     // shared globals
@@ -45,13 +31,28 @@ export default class GameScene extends Phaser.Scene {
     this.canShowWarning = true;
     this.correctcount = 0;
     this.incorrectcount = 0;
-    
-    // Set level data
-    this.levelData = level1Questions;
-    
+
+    // Set level data from the selected config
+    this.levelKey = this.scene.settings.data?.levelKey || "level1";
+    if (!this.isLevelUnlocked(this.levelKey)) {
+      console.warn(
+        `Level ${this.levelKey} is locked. Returning to level select.`,
+      );
+      this.scene.start("LabScene");
+      return;
+    }
+
+    this.levelPreviouslyCompleted = this.getCompletedLevels().includes(
+      this.levelKey,
+    );
+
+    this.levelConfig = LEVELS[this.levelKey] || LEVELS.level1;
+    this.levelData = this.levelConfig.questionData;
+    this.questionSequence = this.levelConfig.sequence;
+
     // Register event listeners for modal interactions
-    this.events.on('qcm_success', this.handleQCMSuccess, this);
-    this.events.on('qcm_wrong', this.handleQCMWrong, this);
+    this.events.on("qcm_success", this.handleQCMSuccess, this);
+    this.events.on("qcm_wrong", this.handleQCMWrong, this);
 
     this.physics.world.gravity.y = 1300;
     const worldWidth = 1320;
@@ -90,7 +91,8 @@ export default class GameScene extends Phaser.Scene {
       .setDepth(2000);
 
     // 1. Background
-    let bg = this.add.image(0, 0, "bg").setOrigin(0, 0);
+    const bgKey = this.levelConfig.backgroundKey || "bg";
+    let bg = this.add.image(0, 0, bgKey).setOrigin(0, 0);
     bg.setDepth(0);
     let scale = Math.max(
       this.cameras.main.width / bg.width,
@@ -103,17 +105,16 @@ export default class GameScene extends Phaser.Scene {
     // 2. Platforms
     this.platforms = this.physics.add.staticGroup();
     createFloor(this, worldWidth / 2, this.floorY, worldWidth, 40);
-    createPlatformRelative(this, 400, 100, 150, 20, "q1"); //1st q platform
-    createPlatformRelative(this, 700, 130, 150, 20, "q2"); //2nd q platform
-    createPlatformRelative(this, 1200, 100, 150, 20, "q3"); //loupe q platform
-    createPlatformRelative(this, 950, 300, 150, 20, "loupe"); //loupe platform
-    createPlatformRelative(this, 150, 130, 150, 20, "pass"); //pass to enemy platform
-    createPlatformRelative(this, 530, 300, 400, 20, "enemy"); //enemy platform
-    createPlatformRelative(this, 200, 410, 400, 20, "q4"); //q4 enemy platform
-    createPlatformRelative(this, 800, 410, 150, 20, "q5"); //q5 platform
-    createPlatformRelative(this, 950, 410, 150, 20, "void"); //void platform
-    createPlatformRelative(this, 1175, 410, 300, 20, "q7"); //q7 platform
-    createPlatformRelative(this, 870, 155, 20, 310, "block"); //block platform
+    this.levelConfig.platforms.forEach((platform) => {
+      createPlatformRelative(
+        this,
+        platform.x,
+        platform.y,
+        platform.width,
+        platform.height,
+        platform.id,
+      );
+    });
 
     // 3. Player
     this.playerController = new PlayerController(this);
@@ -139,19 +140,29 @@ export default class GameScene extends Phaser.Scene {
 
     // 5. Items & Flags
     this.itemManager = new ItemManager(this);
-    this.itemManager.addScopeRelative(950, 340, "q6", false);
-    this.itemManager.addScopeRelative(550, 50, "q1", false);
-    this.itemManager.addScopeRelative(700, 170, "q2", false);
-    this.itemManager.addScopeRelative(100, 450, "q3", false);
-    this.itemManager.addScopeRelative(1250, 450, "q5", false);
-    this.itemManager.addScopeRelative(800, 450, "q4", false);
-    this.itemManager.addScopeLoopRelative(1200, 140, "q7", true);
-    this.itemManager.addLoupeRelative(400, 140);
-    this.itemManager.addLoupeRelative(1200, 30);
+    this.levelConfig.items.forEach((itemConfig) => {
+      if (itemConfig.type === "scope") {
+        this.itemManager.addScopeRelative(
+          itemConfig.x,
+          itemConfig.y,
+          itemConfig.questionId,
+          itemConfig.locked ?? false,
+        );
+      } else if (itemConfig.type === "scopeLoop") {
+        this.itemManager.addScopeLoopRelative(
+          itemConfig.x,
+          itemConfig.y,
+          itemConfig.questionId,
+          itemConfig.locked ?? false,
+        );
+      } else if (itemConfig.type === "loupe") {
+        this.itemManager.addLoupeRelative(itemConfig.x, itemConfig.y);
+      }
+    });
 
-    // Hide all question scopes except q1 initially
-    this.itemManager.items.getChildren().forEach(item => {
-      if (!item.isLoupe && item.questionId !== "q1") {
+    const firstQuestionId = this.questionSequence[0];
+    this.itemManager.items.getChildren().forEach((item) => {
+      if (!item.isLoupe && item.questionId !== firstQuestionId) {
         item.disableBody(true, true);
       }
     });
@@ -159,15 +170,15 @@ export default class GameScene extends Phaser.Scene {
     // 6. Enemies
     this.enemies = this.physics.add.group();
     this.enemyManager = new EnemyManager(this);
-    this.enemyManager.createEnemyRelative(530, 330, 400, 100, "E1");
-    this.enemyManager2 = new EnemyManager(this);
-    this.enemyManager2.createEnemyRelative(500, 40, 700, 100, "E2");
-    this.enemyManager3 = new EnemyManager(this);
-    this.enemyManager3.createEnemyRelative(210, 440, 400, 100, "E3");
-    this.enemyManager4 = new EnemyManager(this);
-    this.enemyManager4.createEnemyRelative(1020, 440, 550, 100, "E4");
-    this.enemyManager5 = new EnemyManager(this);
-    this.enemyManager5.createEnemyRelative(1100, 40, 400, 100, "E5");
+    this.levelConfig.enemies.forEach((enemyConfig) => {
+      this.enemyManager.createEnemyRelative(
+        enemyConfig.x,
+        enemyConfig.y,
+        enemyConfig.range,
+        enemyConfig.speed,
+        enemyConfig.name,
+      );
+    });
 
     // overlaps
     this.physics.add.overlap(
@@ -248,17 +259,28 @@ export default class GameScene extends Phaser.Scene {
       },
     };
 
-    // Optional: Hide buttons on game over
+    // Optional: Hide buttons on game over and cleanup scene resources
     this.events.on("shutdown", () => {
       const controlsPanel = document.getElementById("controls-panel");
       if (controlsPanel) {
         controlsPanel.style.display = "none";
       }
+      if (this.bgMusic) {
+        this.bgMusic.stop();
+      }
+      if (this.onScaleResize) {
+        this.scale.off("resize", this.onScaleResize);
+      }
+      if (this.onOrientationChange) {
+        this.scale.off("orientationchange", this.onOrientationChange);
+      }
+      this.events.off("qcm_success", this.handleQCMSuccess, this);
+      this.events.off("qcm_wrong", this.handleQCMWrong, this);
     });
   }
 
   // ===== LEVEL SPECIFIC DOMAIN LOGIC =====
-  handleQCMSuccess(id) {
+  async handleQCMSuccess(id) {
     this.StatsService.addCorrect(id);
     if (this.scoreText) {
       this.scoreText.setText("| Score: " + this.StatsService.getScore());
@@ -268,16 +290,15 @@ export default class GameScene extends Phaser.Scene {
     this.progressBar.width = this.correctcount;
 
     // Sequence for questions
-    const sequence = ["q1", "q2", "q3", "q4", "q5", "q6", "q7"];
+    const sequence = this.questionSequence;
     const currentIndex = sequence.indexOf(id);
     if (currentIndex !== -1 && currentIndex < sequence.length - 1) {
       const nextId = sequence[currentIndex + 1];
-      const nextScope = this.itemManager.items.getChildren().find(item => item.questionId === nextId);
+      const nextScope = this.itemManager.items
+        .getChildren()
+        .find((item) => item.questionId === nextId);
       if (nextScope) {
-        // Re-enable and show the next scope
         nextScope.enableBody(false, nextScope.x, nextScope.y, true, true);
-        
-        // Add a slight ping effect
         this.tweens.add({
           targets: nextScope,
           scale: 0.3,
@@ -286,13 +307,45 @@ export default class GameScene extends Phaser.Scene {
           onComplete: () => nextScope.setScale(0.2),
         });
       }
-    } else if (id === "q7") {
-      // Level completed! Push stats.
-      console.log("🎉 Level Complete! Pushing stats...");
-      this.StatsService.pushStats();
-      this.modal.showInfoMessage("🎉 Level Complete! Your stats have been saved.", true, 3000);
+    } else if (id === sequence[sequence.length - 1]) {
+      // Level completed! Save progress, push stats, then go to next level.
+      const wasCompleted = this.levelPreviouslyCompleted;
+      this.saveCompletedLevel(this.levelKey);
+      console.log("🎉 Level Complete!");
+
+      if (!wasCompleted) {
+        console.log("🎉 Pushing new stats for this level...");
+        await this.StatsService.pushStats();
+      } else {
+        console.log(
+          "ℹ️ Level already completed before; skipping duplicate stats push.",
+        );
+      }
+
+      const nextLevelKey = this.getNextLevelKey(this.levelKey);
+      if (nextLevelKey) {
+        this.modal.showInfoMessage(
+          "🎉 Level Complete! Loading next level...",
+          false,
+          0,
+        );
+        this.time.delayedCall(
+          2500,
+          () => {
+            this.modal.closeModal();
+            this.scene.restart({ levelKey: nextLevelKey });
+          },
+          [],
+        );
+      } else {
+        this.modal.showInfoMessage(
+          "🎉 All levels complete! Well done.",
+          true,
+          3000,
+        );
+      }
     }
- 
+
     const scope = this.currentScope;
 
     // Default behavior → destroy scope
@@ -330,11 +383,53 @@ export default class GameScene extends Phaser.Scene {
     } else if (this.incorrectcount == 4) {
       this.enemyManager.increaseEnemySpeedByName("E4", 50);
     }
-    
+
     this.StatsService.addIncorrect(id);
     if (this.scoreText) {
       this.scoreText.setText("| Score: " + this.StatsService.getScore());
     }
+  }
+
+  resize(gameSize) {
+    const width = gameSize?.width || this.scale.width;
+    const height = gameSize?.height || this.scale.height;
+    console.log(`📐 Canvas Resized: ${width}x${height}`);
+    // TODO: update UI and layout when needed for responsive scaling.
+  }
+
+  getCompletedLevels() {
+    try {
+      return JSON.parse(localStorage.getItem("completedLevels") || "[]");
+    } catch (err) {
+      console.warn("Failed to parse completedLevels", err);
+      return [];
+    }
+  }
+
+  saveCompletedLevel(levelKey) {
+    const completed = new Set(this.getCompletedLevels());
+    if (!completed.has(levelKey)) {
+      completed.add(levelKey);
+      localStorage.setItem(
+        "completedLevels",
+        JSON.stringify(Array.from(completed)),
+      );
+    }
+  }
+
+  getNextLevelKey(levelKey) {
+    const levels = Object.values(LEVELS);
+    const index = levels.findIndex((level) => level.key === levelKey);
+    if (index === -1 || index >= levels.length - 1) return null;
+    return levels[index + 1].key;
+  }
+
+  isLevelUnlocked(levelKey) {
+    const levels = Object.values(LEVELS);
+    const index = levels.findIndex((level) => level.key === levelKey);
+    if (index <= 0) return index === 0;
+    const previousLevelKey = levels[index - 1].key;
+    return this.getCompletedLevels().includes(previousLevelKey);
   }
 }
 

@@ -29,22 +29,18 @@ export class PlayerController {
       },
     };
     // Get the character selection from the DOM (Ensure this is available when the script runs)
-    const character = localStorage.getItem("character");
+    const character = localStorage.getItem("character") || "man";
 
-    if (!character) {
-      // prevent game from starting incorrectly
-      console.warn("No character selected!");
-      return;
+    if (!localStorage.getItem("character")) {
+      console.warn("No character selected, defaulting to man.");
     }
 
-    // use character safely
-    // Pick the active set based on selection (defaults to man if error)
+    // Pick the active set based on selection (defaults to man if invalid key)
     this.currentAssets = characterAssets[character] || characterAssets.man;
   }
 
   create() {
     const scene = this.scene;
-    console.log(this.currentAssets);
     // Create physics-enabled player using the selected idle texture
     scene.player = scene.physics.add.image(
       this.spawnX,
@@ -66,7 +62,6 @@ export class PlayerController {
       .setScrollFactor(0)
       .setDepth(2000);
 
-      
     // Initialize gender-specific sound objects
     this.sfx = {
       jump: scene.sound.add(this.currentAssets.sfx.jump, { volume: 0.4 }),

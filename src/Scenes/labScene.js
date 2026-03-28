@@ -1,3 +1,5 @@
+import { LEVELS } from "../data/levelConfigs.js";
+
 export default class LabScene extends Phaser.Scene {
   constructor() {
     super({ key: "LabScene" });
@@ -14,34 +16,47 @@ export default class LabScene extends Phaser.Scene {
       "lab",
     );
 
-    // 1. Create the Visual Circle
-    // We draw it at 0,0 locally so we can move the whole 'this.circle' object later
-    this.circle = this.add
-      .graphics()
-      .fillStyle(0x0000ff, 0.4)
-      .fillCircle(0, 0, 55)
-      .setAlpha(0);
+    this.levelButtons = [];
+    const levels = Object.values(LEVELS);
+    const completedLevels = this.getCompletedLevels();
 
-    // 2. Create Hotspot (Zone)
-    // We set the hit area to 75, 75 because the hit area is relative to the Zone's top-left
-    this.hotspot = this.add
-      .zone(0, 0, 150, 150)
-      .setInteractive(
-        //
-        new Phaser.Geom.Circle(75, 75, 75),
-        Phaser.Geom.Circle.Contains,
-      )
-      .on("pointerover", () => this.circle.setAlpha(1))
-      .on("pointerout", () => this.circle.setAlpha(0))
-      .on("pointerdown", () => this.scene.start("GameScene"));
+    levels.forEach((level, index) => {
+      const isUnlocked =
+        index === 0 || completedLevels.includes(levels[index - 1].key);
+      const titleText = isUnlocked ? level.title : `${level.title} 🔒`;
+      const button = this.add
+        .text(this.cameras.main.centerX, 180 + index * 90, titleText, {
+          fontSize: "32px",
+          color: isUnlocked ? "#ffffff" : "#aaaaaa",
+          backgroundColor: isUnlocked ? "#00000099" : "#22222299",
+          padding: { x: 18, y: 12 },
+          align: "center",
+        })
+        .setOrigin(0.5)
+        .setInteractive({ useHandCursor: isUnlocked })
+        .on("pointerover", () => {
+          if (isUnlocked) button.setStyle({ fill: "#00ff00" });
+        })
+        .on("pointerout", () => {
+          button.setStyle({ fill: isUnlocked ? "#ffffff" : "#aaaaaa" });
+        })
+        .on("pointerdown", () => {
+          if (!isUnlocked) {
+            this.showLockedLevelMessage();
+            return;
+          }
+          this.scene.start("GameScene", { levelKey: level.key });
+        });
 
-    this.hotspot.useHandCursor = true;
+      this.levelButtons.push(button);
+    });
 
-    this.lvlText = this.add
-      .text(0, 0, "Lvl 1", {
-        fontSize: "40px",
+    this.levelInstructions = this.add
+      .text(this.cameras.main.centerX, 90, "Choose a level to start", {
+        fontSize: "28px",
         color: "#ffffff",
         fontStyle: "bold",
+        align: "center",
       })
       .setOrigin(0.5);
 
@@ -62,19 +77,40 @@ export default class LabScene extends Phaser.Scene {
     const scale = Math.min(width / this.bg.width, height / this.bg.height);
     this.bg.setScale(scale);
 
-    // --- RELATIVE POSITION ON IMAGE ---
+    if (this.levelInstructions) {
+      this.levelInstructions.setPosition(width / 2, 90);
+    }
 
-    // Original image coordinates where hotspot should be
-    const originalX = 260;
-    const originalY = 695;
+    if (this.levelButtons) {
+      this.levelButtons.forEach((button, index) => {
+        button.setPosition(width / 2, 180 + index * 90);
+      });
+    }
+  }
 
-    // Convert image-space → screen-space
-    const x = this.bg.x + (originalX - this.bg.width / 2) * scale;
-    const y = this.bg.y + (originalY - this.bg.height / 2) * scale;
+  getCompletedLevels() {
+    try {
+      return JSON.parse(localStorage.getItem("completedLevels") || "[]");
+    } catch (err) {
+      console.warn("Failed to parse completedLevels", err);
+      return [];
+    }
+  }
 
-    // Move UI elements
-    this.hotspot.setPosition(x, y).setScale(scale);
-    this.circle.setPosition(x, y).setScale(scale);
-    this.lvlText.setPosition(x, y - 120 * scale).setScale(scale);
+  showLockedLevelMessage() {
+    if (!this.levelInstructions) return;
+    const previousText = this.levelInstructions.text;
+    this.levelInstructions.setText(
+      "Complete the previous level to unlock this one.",
+    );
+    this.time.delayedCall(
+      2000,
+      () => {
+        if (this.levelInstructions) {
+          this.levelInstructions.setText(previousText);
+        }
+      },
+      [],
+    );
   }
 }
