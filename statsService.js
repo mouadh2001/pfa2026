@@ -80,7 +80,7 @@ export class StatsService {
 
     try {
       const response = await fetch(`${API_URL}/stats`, {
-        method: "PATCH",
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,

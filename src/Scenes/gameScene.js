@@ -309,16 +309,17 @@ export default class GameScene extends Phaser.Scene {
       }
     } else if (id === sequence[sequence.length - 1]) {
       // Level completed! Save progress, push stats, then go to next level.
-      const wasCompleted = this.levelPreviouslyCompleted;
+      const completedLevels = this.getCompletedLevels();
+      const shouldPushStats = !completedLevels.includes(this.levelKey);
       this.saveCompletedLevel(this.levelKey);
       console.log("🎉 Level Complete!");
 
-      if (!wasCompleted) {
+      if (shouldPushStats) {
         console.log("🎉 Pushing new stats for this level...");
         await this.StatsService.pushStats();
       } else {
         console.log(
-          "ℹ️ Level already completed before; skipping duplicate stats push.",
+          "ℹ️ Current level already completed; skipping duplicate stats push.",
         );
       }
 
