@@ -56,7 +56,7 @@ export const LEVELS = {
     key: "level2",
     title: "Level 2",
     backgroundKey: "bg",
-    spawn: { x: 120, y: 100 },
+    spawn: { x: 100, y: 100 },
     questionData: level2Questions,
     sequence: ["q1", "q2", "q3", "q4", "q5", "q6", "q7"],
     platforms: [
@@ -96,9 +96,9 @@ export const LEVELS = {
       { type: "loupe", x: 745, y: 440 },
     ],
     enemies: [
-      { x: 600, y: 50, range: 380, speed: 110, name: "E1" },
-      { x: 1020, y: 50, range: 300, speed: 90, name: "E2" },
-      { x: 780, y: 50, range: 240, speed: 80, name: "E3" },
+      { x: 400, y: 200, range: 700, speed: 100, name: "E1" },
+      { x: 600, y: 350, range: 700, speed: 100, name: "E2" },
+      { x: 680, y: 50, range: 1000, speed: 100, name: "E3" },
     ],
   },
 };
