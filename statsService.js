@@ -1,5 +1,6 @@
 export class StatsService {
-  constructor() {
+  constructor(levelKey = null) {
+    this.levelKey = levelKey;
     this.stats = {
       correct: 0,
       incorrect: 0,
@@ -7,7 +8,6 @@ export class StatsService {
       time: 0,
     };
 
-    // Tracks individual question attempts only
     this.questionStats = {};
     this.currentQuestionId = null;
     this.gameStartTime = Date.now();
@@ -19,6 +19,8 @@ export class StatsService {
       this.questionStats[id] = {
         attempts: 0,
         solved: false,
+        correctSelections: 0,
+        incorrectSelections: 0,
       };
     }
     this.currentQuestionId = id;
@@ -60,6 +62,18 @@ export class StatsService {
     );
   }
 
+  addCorrectSelection(id) {
+    const qId = id || this.currentQuestionId;
+    if (!this.questionStats[qId]) this.startQuestion(qId);
+    this.questionStats[qId].correctSelections++;
+  }
+
+  addIncorrectSelection(id) {
+    const qId = id || this.currentQuestionId;
+    if (!this.questionStats[qId]) this.startQuestion(qId);
+    this.questionStats[qId].incorrectSelections++;
+  }
+
   calculatePoints(attempt) {
     if (attempt <= 1) return 5;
     if (attempt === 2) return 4;
@@ -86,10 +100,12 @@ export class StatsService {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
+          levelKey: this.levelKey,
           score: finalStats.score,
           correct: finalStats.correct,
           incorrect: finalStats.incorrect,
           time: finalStats.time,
+          questionStats: this.getQuestionStats(),
         }),
       });
 
@@ -113,7 +129,25 @@ export class StatsService {
   }
 
   getQuestionStats() {
-    return this.questionStats;
+    const formattedStats = {};
+    for (const [qId, data] of Object.entries(this.questionStats)) {
+      formattedStats[qId] = {
+        correct: data.correctSelections || 0,
+        wrong: data.incorrectSelections || 0
+      };
+    }
+    return formattedStats;
+  }
+
+  getQuestionStatsFor(id) {
+    return (
+      this.questionStats[id] || {
+        attempts: 0,
+        solved: false,
+        correctSelections: 0,
+        incorrectSelections: 0,
+      }
+    );
   }
 
   getScore() {

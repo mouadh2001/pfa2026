@@ -1,8 +1,8 @@
 export class PlayerController {
-  constructor(scene) {
+  constructor(scene, spawnPoint = {}) {
     this.scene = scene;
-    this.spawnX = 100;
-    this.spawnY = 500;
+    this.spawnX = spawnPoint.x ?? 100;
+    this.spawnY = spawnPoint.y ?? 500;
     this.lives = 3;
     this.playerState = "idel";
     this.wasInAir = false;
@@ -78,6 +78,34 @@ export class PlayerController {
     this.scene.player.setVelocity(0, 0);
   }
 
+  setSpawnPoint(spawnPoint = {}) {
+    if (typeof spawnPoint !== "object" || spawnPoint === null) return;
+    this.spawnX = spawnPoint.x ?? this.spawnX;
+    this.spawnY = spawnPoint.y ?? this.spawnY;
+  }
+
+  isOnElevatorPlatform() {
+    const player = this.scene.player;
+    if (!player?.body || !this.scene?.platforms) return false;
+
+    const playerBottom = player.body.bottom;
+    const playerCenterX = player.x;
+
+    return this.scene.platforms.getChildren().some((platform) => {
+      if (platform.moveMode !== "elevator") return false;
+      const platformTop =
+        platform.body?.top ?? platform.y - platform.displayHeight / 2;
+      const platformLeft =
+        platform.body?.left ?? platform.x - platform.displayWidth / 2;
+      const platformRight =
+        platform.body?.right ?? platform.x + platform.displayWidth / 2;
+      const isHorizontallyOver =
+        playerCenterX >= platformLeft && playerCenterX <= platformRight;
+      const isVerticallyNear = Math.abs(playerBottom - platformTop) <= 12;
+      return isHorizontallyOver && isVerticallyNear;
+    });
+  }
+
   loseLife() {
     this.lives--;
     this.scene.livesText.setText("Lives: " + this.lives);
@@ -126,7 +154,10 @@ export class PlayerController {
     }
 
     const player = this.scene.player;
-    const onGround = player.body.touching.down || player.body.blocked.down;
+    const onGround =
+      player.body.touching.down ||
+      player.body.blocked.down ||
+      this.isOnElevatorPlatform();
     let velocityX = 0;
 
     // 1. Movement Logic

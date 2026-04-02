@@ -143,6 +143,8 @@ export class ModalUI {
         }
 
         if (isCorrect) {
+          this.scene.StatsService.addCorrectSelection(id);
+
           // ✅ CORRECT
           this.sfx.correct.play();
 
@@ -174,6 +176,8 @@ export class ModalUI {
             buttons.forEach((btn) => (btn.style.pointerEvents = "auto"));
           }
         } else {
+          this.scene.StatsService.addIncorrectSelection(id);
+
           // ❌ WRONG
           this.sfx.wrong.play();
 
@@ -222,7 +226,6 @@ export class ModalUI {
       <div id="modal-feedback"></div>
       <div id="feedback-images" style="display:flex; flex-wrap:no-wrap; justify-content:center;"></div>
       <div id="modal-answers"></div>
-      <div id="modal-message"></div>
     </div>
   `;
     document.body.appendChild(modal);

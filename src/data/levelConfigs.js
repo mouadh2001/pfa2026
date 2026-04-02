@@ -6,6 +6,7 @@ export const LEVELS = {
     key: "level1",
     title: "Level 1",
     backgroundKey: "bg",
+    spawn: { x: 100, y: 500 },
     questionData: level1Questions,
     sequence: ["q1", "q2", "q3", "q4", "q5", "q6", "q7"],
     platforms: [
@@ -13,7 +14,18 @@ export const LEVELS = {
       { x: 700, y: 130, width: 150, height: 20, id: "q2" },
       { x: 1200, y: 100, width: 150, height: 20, id: "q3" },
       { x: 950, y: 300, width: 150, height: 20, id: "loupe" },
-      { x: 150, y: 130, width: 150, height: 20, id: "pass" },
+      {
+        x: 150,
+        y: 130,
+        width: 150,
+        height: 20,
+        id: "pass",
+        movement: {
+          type: "raise",
+          targetHeightAboveFloor: 190,
+          step: 30,
+        },
+      },
       { x: 530, y: 300, width: 400, height: 20, id: "enemy" },
       { x: 200, y: 410, width: 400, height: 20, id: "q4" },
       { x: 800, y: 410, width: 150, height: 20, id: "q5" },
@@ -44,35 +56,49 @@ export const LEVELS = {
     key: "level2",
     title: "Level 2",
     backgroundKey: "bg",
+    spawn: { x: 150, y: 100 },
     questionData: level2Questions,
     sequence: ["q1", "q2", "q3", "q4", "q5", "q6", "q7"],
     platforms: [
-      { x: 350, y: 120, width: 150, height: 20, id: "q1" },
-      { x: 650, y: 100, width: 150, height: 20, id: "q2" },
-      { x: 950, y: 150, width: 150, height: 20, id: "q3" },
-      { x: 500, y: 260, width: 150, height: 20, id: "loupe" },
-      { x: 150, y: 150, width: 150, height: 20, id: "pass" },
-      { x: 650, y: 380, width: 500, height: 20, id: "enemy" },
-      { x: 260, y: 470, width: 300, height: 20, id: "q4" },
-      { x: 820, y: 470, width: 150, height: 20, id: "q5" },
-      { x: 1180, y: 470, width: 250, height: 20, id: "q7" },
-      { x: 900, y: 190, width: 20, height: 260, id: "block" },
+      { x: 1195, y: 120, width: 150, height: 20, id: "q4" }, //q4
+      { x: 1095, y: 450, width: 150, height: 20, id: "q7" }, //
+      { x: 1095, y: 230, width: 150, height: 20, id: "q5" }, //
+      {
+        x: 470,
+        y: 260,
+        width: 200,
+        height: 20,
+        id: "elevator",
+        movement: {
+          type: "elevator",
+          minHeightAboveFloor: 120,
+          maxHeightAboveFloor: 400,
+          speed: 60,
+        },
+      },
+      { x: 925, y: 260, width: 150, height: 20, id: "q6" },
+      { x: 750, y: 400, width: 150, height: 20, id: "loupe" },
+      { x: 170, y: 250, width: 150, height: 20, id: "q2" }, //q2
+      { x: 850, y: 150, width: 300, height: 20, id: "q5" }, //
+      { x: 1195, y: 340, width: 150, height: 20, id: "none" }, //
+      { x: 120, y: 120, width: 250, height: 20, id: "q1" }, //q1
+      { x: 120, y: 400, width: 250, height: 20, id: "q3" }, //q3
+      { x: 1010, y: 300, width: 20, height: 320, id: "block" },
     ],
     items: [
-      { type: "scope", x: 380, y: 80, questionId: "q1" },
-      { type: "scope", x: 650, y: 170, questionId: "q2" },
-      { type: "scope", x: 940, y: 120, questionId: "q3" },
-      { type: "scope", x: 220, y: 140, questionId: "q4" },
-      { type: "scope", x: 820, y: 140, questionId: "q5" },
-      { type: "scope", x: 640, y: 330, questionId: "q6" },
-      { type: "scopeLoop", x: 1180, y: 130, questionId: "q7" },
-      { type: "loupe", x: 520, y: 80 },
-      { type: "loupe", x: 960, y: 40 },
+      { type: "scope", x: 150, y: 160, questionId: "q1" },
+      { type: "scope", x: 150, y: 290, questionId: "q2" },
+      { type: "scope", x: 150, y: 440, questionId: "q3" },
+      { type: "scope", x: 970, y: 190, questionId: "q4" },
+      { type: "scope", x: 970, y: 300, questionId: "q5" },
+      { type: "scope", x: 1180, y: 160, questionId: "q6" },
+      { type: "scopeLoop", x: 1100, y: 490, questionId: "q7" },
+      { type: "loupe", x: 745, y: 440 },
     ],
     enemies: [
-      { x: 600, y: 320, range: 380, speed: 110, name: "E1" },
-      { x: 1020, y: 80, range: 300, speed: 90, name: "E2" },
-      { x: 280, y: 470, range: 240, speed: 80, name: "E3" },
+      { x: 600, y: 50, range: 380, speed: 110, name: "E1" },
+      { x: 1020, y: 50, range: 300, speed: 90, name: "E2" },
+      { x: 780, y: 50, range: 240, speed: 80, name: "E3" },
     ],
   },
 };

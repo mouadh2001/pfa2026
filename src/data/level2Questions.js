@@ -8,7 +8,7 @@ export const level2Questions = {
       "Clear cell change",
       "Lymphoid infiltrate",
     ],
-    c: [2],
+    c: [0],
     feedbacks: [
       { text: "Not this one. Look for more mitoses.", imgs: [] },
       {
@@ -32,7 +32,7 @@ export const level2Questions = {
       "CD34 and STAT6",
       "Chromogranin and Synaptophysin",
     ],
-    c: [1, 4],
+    c: [0],
     feedbacks: [
       { text: "This panel is more typical of melanoma.", imgs: [] },
       {
@@ -77,7 +77,7 @@ export const level2Questions = {
       "Low cellularity",
       "Minimal pleomorphism",
     ],
-    c: [1],
+    c: [0],
     feedbacks: [
       { text: "Uniform cytology suggests a benign process.", imgs: [] },
       { text: "Correct! High N:C ratio is a malignancy feature.", imgs: [] },
@@ -89,7 +89,7 @@ export const level2Questions = {
   q5: {
     q: "What is the most likely line of differentiation?",
     a: ["Neural", "Muscle", "Vascular", "Adipocytic", "Fibrohistiocytic"],
-    c: [1],
+    c: [0],
     feedbacks: [
       {
         text: "Neural differentiation is not supported by the morphology.",

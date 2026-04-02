@@ -2,7 +2,9 @@ import LabScene from "./labScene.js";
 import PreloaderScene from "./loadingScene.js";
 import {
   createFloor,
-  createPlatformRelative,
+  createPlatformFromConfig,
+  raisePlatform,
+  updatePlatformMovement,
 } from "../gameObjects/platforms.js";
 import { EnemyManager } from "../gameObjects/enemies.js";
 import { ItemManager } from "../gameObjects/items.js";
@@ -34,6 +36,7 @@ export default class GameScene extends Phaser.Scene {
 
     // Set level data from the selected config
     this.levelKey = this.scene.settings.data?.levelKey || "level1";
+    this.StatsService.levelKey = this.levelKey;
     if (!this.isLevelUnlocked(this.levelKey)) {
       console.warn(
         `Level ${this.levelKey} is locked. Returning to level select.`,
@@ -106,18 +109,11 @@ export default class GameScene extends Phaser.Scene {
     this.platforms = this.physics.add.staticGroup();
     createFloor(this, worldWidth / 2, this.floorY, worldWidth, 40);
     this.levelConfig.platforms.forEach((platform) => {
-      createPlatformRelative(
-        this,
-        platform.x,
-        platform.y,
-        platform.width,
-        platform.height,
-        platform.id,
-      );
+      createPlatformFromConfig(this, platform);
     });
 
     // 3. Player
-    this.playerController = new PlayerController(this);
+    this.playerController = new PlayerController(this, this.levelConfig.spawn);
     this.playerController.create();
 
     // 4. Camera & World
@@ -205,7 +201,7 @@ export default class GameScene extends Phaser.Scene {
     this.bgMusic.play();
   }
 
-  update() {
+  update(time, delta) {
     if (this.popupOpen) return;
 
     // ===== COMBINE KEYBOARD + TOUCH INPUT =====
@@ -218,6 +214,7 @@ export default class GameScene extends Phaser.Scene {
 
     this.playerController.update(activeCursors);
     this.enemyManager.update();
+    updatePlatformMovement(this, delta);
   }
 
   // ===== SETUP HTML BUTTON CONTROLS =====
@@ -309,19 +306,11 @@ export default class GameScene extends Phaser.Scene {
       }
     } else if (id === sequence[sequence.length - 1]) {
       // Level completed! Save progress, push stats, then go to next level.
-      const completedLevels = this.getCompletedLevels();
-      const shouldPushStats = !completedLevels.includes(this.levelKey);
       this.saveCompletedLevel(this.levelKey);
       console.log("🎉 Level Complete!");
 
-      if (shouldPushStats) {
-        console.log("🎉 Pushing new stats for this level...");
-        await this.StatsService.pushStats();
-      } else {
-        console.log(
-          "ℹ️ Current level already completed; skipping duplicate stats push.",
-        );
-      }
+      console.log("🎉 Pushing stats for this level...");
+      await this.StatsService.pushStats();
 
       const nextLevelKey = this.getNextLevelKey(this.levelKey);
       if (nextLevelKey) {
@@ -355,12 +344,16 @@ export default class GameScene extends Phaser.Scene {
       this.currentScope = null; // 🔥 important
     }
     // ✅ Platform logic stays unchanged
-    const passPlatform = this.platforms
-      .getChildren()
-      .find((p) => p.id === "pass");
-    if (passPlatform && passPlatform.y !== this.floorY - 190) {
-      passPlatform.y -= 30;
-      passPlatform.refreshBody();
+    const passPlatformConfig = this.levelConfig.platforms.find(
+      (p) => p.id === "pass",
+    );
+    if (passPlatformConfig?.movement?.type === "raise") {
+      raisePlatform(
+        this,
+        "pass",
+        passPlatformConfig.movement.targetHeightAboveFloor,
+        passPlatformConfig.movement.step,
+      );
     }
     if (id === "q5") {
       const voidPlatform = this.platforms
