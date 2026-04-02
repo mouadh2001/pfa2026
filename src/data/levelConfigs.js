@@ -56,7 +56,7 @@ export const LEVELS = {
     key: "level2",
     title: "Level 2",
     backgroundKey: "bg",
-    spawn: { x: 150, y: 100 },
+    spawn: { x: 120, y: 100 },
     questionData: level2Questions,
     sequence: ["q1", "q2", "q3", "q4", "q5", "q6", "q7"],
     platforms: [
