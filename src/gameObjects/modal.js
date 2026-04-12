@@ -50,6 +50,23 @@ export class ModalUI {
       );
     }
 
+    // Completely freeze the game silently
+    if (this.tumorWindow) {
+      if (this.scene.StatsService) this.scene.StatsService.startObservationTimer();
+      this.scene.popupOpen = true;
+      this.scene.physics.pause();
+
+      // Poll to see when the external window is closed
+      const checkClosedTimer = setInterval(() => {
+        if (this.tumorWindow.closed) {
+          clearInterval(checkClosedTimer);
+          if (this.scene.StatsService) this.scene.StatsService.stopObservationTimer();
+          this.scene.physics.resume();
+          this.scene.popupOpen = false;
+        }
+      }, 500); // Check every half-second
+    }
+
     // 2. Handle Cooldown & Logic
     // We disable the scope temporarily so the player doesn't trigger it 60 times a second
     if (scope) {
@@ -76,6 +93,7 @@ export class ModalUI {
   }
 
   openQCM(id, data) {
+    if (this.scene.StatsService) this.scene.StatsService.startQuestion(id);
     this.scene.popupOpen = true;
     if (this.scene.playerController?.sfx?.run?.isPlaying) {
       this.scene.playerController.sfx.run.stop();

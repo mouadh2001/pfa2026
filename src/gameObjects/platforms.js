@@ -64,6 +64,24 @@ export function configureElevatorPlatform(scene, platform, movementConfig) {
   }
 }
 
+export function configureHorizontalElevatorPlatform(scene, platform, movementConfig) {
+  platform.moveMode = "elevator"; // Keep elevator for player.js checks
+  platform.elevator = {
+    isHorizontal: true,
+    minX: movementConfig.minX,
+    maxX: movementConfig.maxX,
+    speed: movementConfig.speed ?? 40,
+    direction: movementConfig.startDirection === "left" ? -1 : 1,
+  };
+
+  if (platform.body?.setImmovable) {
+    platform.body.setImmovable(true);
+  }
+  if (platform.body?.setAllowGravity) {
+    platform.body.setAllowGravity(false);
+  }
+}
+
 export function createPlatformFromConfig(scene, platformConfig) {
   const platform = createPlatformRelative(
     scene,
@@ -76,6 +94,8 @@ export function createPlatformFromConfig(scene, platformConfig) {
 
   if (platformConfig.movement?.type === "elevator") {
     configureElevatorPlatform(scene, platform, platformConfig.movement);
+  } else if (platformConfig.movement?.type === "horizontal_elevator") {
+    configureHorizontalElevatorPlatform(scene, platform, platformConfig.movement);
   }
 
   return platform;
@@ -88,21 +108,48 @@ export function updatePlatformMovement(scene, delta) {
     if (platform.moveMode !== "elevator" || !platform.elevator) return;
 
     const elevator = platform.elevator;
-    const targetY =
-      platform.y + ((elevator.speed * delta) / 1000) * elevator.direction;
 
-    if (targetY <= elevator.minY) {
-      platform.y = elevator.minY;
-      elevator.direction = 1;
-    } else if (targetY >= elevator.maxY) {
-      platform.y = elevator.maxY;
-      elevator.direction = -1;
+    if (elevator.isHorizontal) {
+      const moveDelta = ((elevator.speed * delta) / 1000) * elevator.direction;
+      const targetX = platform.x + moveDelta;
+
+      if (targetX <= elevator.minX) {
+        platform.x = elevator.minX;
+        elevator.direction = 1;
+      } else if (targetX >= elevator.maxX) {
+        platform.x = elevator.maxX;
+        elevator.direction = -1;
+      } else {
+        platform.x = targetX;
+      }
+
+      if (typeof platform.refreshBody === "function") {
+        platform.refreshBody();
+      }
+
+      const player = scene.player;
+      if (player && player.body.touching.down) {
+         if (player.body.bottom >= platform.body.top - 5 && player.body.bottom <= platform.body.top + 5 && player.x >= platform.body.left && player.x <= platform.body.right) {
+            player.x += moveDelta;
+         }
+      }
     } else {
-      platform.y = targetY;
-    }
+      const targetY =
+        platform.y + ((elevator.speed * delta) / 1000) * elevator.direction;
 
-    if (typeof platform.refreshBody === "function") {
-      platform.refreshBody();
+      if (targetY <= elevator.minY) {
+        platform.y = elevator.minY;
+        elevator.direction = 1;
+      } else if (targetY >= elevator.maxY) {
+        platform.y = elevator.maxY;
+        elevator.direction = -1;
+      } else {
+        platform.y = targetY;
+      }
+
+      if (typeof platform.refreshBody === "function") {
+        platform.refreshBody();
+      }
     }
   });
 }

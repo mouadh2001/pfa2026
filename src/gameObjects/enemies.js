@@ -4,7 +4,7 @@ export class EnemyManager {
     this.scene = scene;
   }
 
-  createEnemyRelative(x, heightAboveFloor, range, speed, name) {
+  createEnemyRelative(x, heightAboveFloor, range, speed, name, type = "patrol", aggroRange = 300) {
     const { scene } = this;
     const y = scene.floorY - heightAboveFloor;
     const enemy = scene.enemies.create(x, y, "enemy");
@@ -22,6 +22,8 @@ export class EnemyManager {
     const patrolWidth = range;
     enemy.minX = x - patrolWidth / 2 + 30; // left edge limit
     enemy.maxX = x + patrolWidth / 2 - 30; // right edge limit
+    enemy.type = type;
+    enemy.aggroRange = aggroRange;
     return enemy;
   }
   // Increase speed of a specific enemy by name
@@ -63,7 +65,28 @@ export class EnemyManager {
   update() {
     this.scene.enemies.children.iterate((enemy) => {
       if (!enemy) return;
+
+      if (enemy.type === "follower" && this.scene.player) {
+        const dist = Phaser.Math.Distance.Between(enemy.x, enemy.y, this.scene.player.x, this.scene.player.y);
+        if (dist < enemy.aggroRange) {
+          const angle = Phaser.Math.Angle.Between(enemy.x, enemy.y, this.scene.player.x, this.scene.player.y);
+          enemy.setVelocityX(Math.cos(angle) * enemy.speed);
+          enemy.setVelocityY(Math.sin(angle) * enemy.speed);
+          enemy.setFlipX(Math.cos(angle) < 0);
+          return;
+        }
+      }
+
       enemy.setVelocityX(enemy.speed * enemy.direction);
+      enemy.setVelocityY(0);
+      
+      // If a patrolling enemy hits a wall/another enemy, reverse immediately
+      if (enemy.body.touching.left && enemy.direction === -1) {
+        enemy.direction = 1;
+      } else if (enemy.body.touching.right && enemy.direction === 1) {
+        enemy.direction = -1;
+      }
+
       // Flip sprite visually
       enemy.setFlipX(enemy.direction < 0);
       // Patrol logic
@@ -107,7 +130,11 @@ export class EnemyManager {
       return; // Exit the function so the player doesn't die
     }
 
-    // --- STANDARD DEATH LOGIC (Existing) ---
+    this.triggerDeath("⚠️ You were caught by an enemy!");
+  }
+
+  triggerDeath(message = "⚠️ You died!") {
+    // --- STANDARD DEATH LOGIC ---
     if (this.scene.popupOpen) return;
 
     if (this.scene.playerController.sfx.run.isPlaying) {
@@ -118,14 +145,9 @@ export class EnemyManager {
     this.scene.popupOpen = true;
     this.scene.physics.pause();
 
-    // 3. Pause the game and show the UI
-    this.scene.popupOpen = true;
-    this.scene.physics.pause();
-
     // Clear feedback and set message
     document.getElementById("modal-feedback").innerText = "";
-    document.getElementById("modal-question").innerText =
-      "⚠️ You were caught by an enemy!";
+    document.getElementById("modal-question").innerText = message;
 
     const container = document.getElementById("modal-answers");
     container.innerHTML = "";
@@ -136,6 +158,7 @@ export class EnemyManager {
     okBtn.onclick = () => {
       this.scene.modal.closeModal();
       this.scene.playerController.loseLife();
+      if (this.scene.StatsService) this.scene.StatsService.addLevelAttempt();
       this.scene.playerController.respawn();
 
       // Resume physics when the user clicks OK
