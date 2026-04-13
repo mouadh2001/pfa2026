@@ -206,7 +206,7 @@ export const LEVELS = {
         },
       },
       {
-        x: 1150,
+        x: 1100,
         y: 260,
         width: 100,
         height: 20,
