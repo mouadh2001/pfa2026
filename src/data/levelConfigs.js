@@ -175,7 +175,7 @@ export const LEVELS = {
         movement: {
           type: "horizontal_elevator",
           minX: 150,
-          maxX: 1100,
+          maxX: 1170,
           speed: 120,
         },
       },
@@ -188,7 +188,7 @@ export const LEVELS = {
         movement: {
           type: "horizontal_elevator",
           minX: 150,
-          maxX: 1100,
+          maxX: 1170,
           speed: 120,
         },
       },
@@ -201,7 +201,7 @@ export const LEVELS = {
         movement: {
           type: "elevator",
           minHeightAboveFloor: 120,
-          maxHeightAboveFloor: 400,
+          maxHeightAboveFloor: 470,
           speed: 120,
         },
       },
@@ -214,7 +214,7 @@ export const LEVELS = {
         movement: {
           type: "elevator",
           minHeightAboveFloor: 120,
-          maxHeightAboveFloor: 400,
+          maxHeightAboveFloor: 470,
           speed: 120,
         },
       },
