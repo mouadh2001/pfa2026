@@ -234,7 +234,7 @@ export const LEVELS = {
       { type: "scope", x: 1280, y: 90, questionId: "q4" },
       { type: "scope", x: 1280, y: 290, questionId: "q5" },
       { type: "scope", x: 1280, y: 490, questionId: "q6" },
-      { type: "scopeLoop", x: 1100, y: 490, questionId: "q7" },
+      { type: "scopeLoop", x: 690, y: 440, questionId: "q7" },
       { type: "loupe", x: 650, y: 120 },
     ],
     enemies: [
