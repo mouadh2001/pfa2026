@@ -180,7 +180,7 @@ export const LEVELS = {
         },
       },
       {
-        x: 1070,
+        x: 970,
         y: 300,
         width: 100,
         height: 20,
@@ -193,7 +193,7 @@ export const LEVELS = {
         },
       },
       {
-        x: 250,
+        x: 200,
         y: 260,
         width: 100,
         height: 20,
@@ -206,7 +206,7 @@ export const LEVELS = {
         },
       },
       {
-        x: 1000,
+        x: 1150,
         y: 260,
         width: 100,
         height: 20,
