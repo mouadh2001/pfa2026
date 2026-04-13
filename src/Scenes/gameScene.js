@@ -1,5 +1,6 @@
 import LabScene from "./labScene.js";
 import PreloaderScene from "./loadingScene.js";
+import TutorialScene from "./tutorialScene.js";
 import {
   createFloor,
   createPlatformFromConfig,
@@ -503,7 +504,7 @@ const config = {
   },
 
   // ===== SCENES =====
-  scene: [PreloaderScene, LabScene, GameScene],
+  scene: [PreloaderScene, TutorialScene, LabScene, GameScene],
 
   // ===== AUDIO OPTIMIZATION =====
   audio: {
