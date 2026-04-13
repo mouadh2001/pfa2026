@@ -167,7 +167,7 @@ export const LEVELS = {
     sequence: ["q1", "q2", "q3", "q4", "q5", "q6", "q7"],
     platforms: [
       {
-        x: 200,
+        x: 150,
         y: 150,
         width: 100,
         height: 20,
@@ -180,7 +180,7 @@ export const LEVELS = {
         },
       },
       {
-        x: 970,
+        x: 1070,
         y: 300,
         width: 100,
         height: 20,
