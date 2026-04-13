@@ -14,6 +14,7 @@ export class StatsService {
       firstTrySuccessCount: 0,
       levelAttempts: 1,
       sessionDuration: 0,
+      totalQuestionsAnswered: 0,
     };
 
     this.questionStats = {};
@@ -142,13 +143,19 @@ export class StatsService {
 
       let totalRespTime = 0;
       let questionsAnswered = 0;
+      let questionsWithTime = 0;
+      
       for (const data of Object.values(this.questionStats)) {
         if (data.timeSpent > 0) {
           totalRespTime += data.timeSpent;
+          questionsWithTime++;
+        }
+        if (data.attempts > 0 || data.correctSelections > 0 || data.incorrectSelections > 0) {
           questionsAnswered++;
         }
       }
-      this.metrics.averageResponseTime = questionsAnswered > 0 ? Number((totalRespTime / questionsAnswered).toFixed(2)) : 0;
+      this.metrics.totalQuestionsAnswered = questionsAnswered;
+      this.metrics.averageResponseTime = questionsWithTime > 0 ? Number((totalRespTime / questionsWithTime).toFixed(2)) : 0;
 
       const payload = {
           levelKey: this.levelKey,
