@@ -78,7 +78,7 @@ export default class GameScene extends Phaser.Scene {
     this.progressBar.setDepth(2000);
     //Savois acquis
     this.savois = this.add
-      .text(150, 20, "|  Savoir acquis:", {
+      .text(150, 20, "|  Aquered knowledge:", {
         fontSize: "22px",
         fill: "#ffffff",
         fontStyle: "bold",

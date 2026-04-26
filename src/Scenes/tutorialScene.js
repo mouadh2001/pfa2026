@@ -58,7 +58,7 @@ export default class TutorialScene extends Phaser.Scene {
     this.nextButton = this.createButton(width / 2 + 150, height - 60, "Suivant", () => this.nextPage());
     
     // Skip Button (Top Right)
-    this.skipButton = this.createButton(width - 120, 60, "Passer (Continuer)", () => this.finishTutorial(), "#555555", "#888888");
+    this.skipButton = this.createButton(width - 120, 60, "Passer", () => this.finishTutorial(), "#555555", "#888888");
 
     this.renderPage();
   }
