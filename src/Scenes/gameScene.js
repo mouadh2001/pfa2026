@@ -64,7 +64,7 @@ export default class GameScene extends Phaser.Scene {
     const worldHeight = this.sys.game.config.height;
     //progressbar
     this.progressBar = this.add.rectangle(
-      380,
+      430,
       30,
       this.correctcount,
       20,
@@ -86,7 +86,7 @@ export default class GameScene extends Phaser.Scene {
       .setScrollFactor(0)
       .setDepth(2000);
     this.scoreText = this.add
-      .text(540, 20, "| Score: " + this.StatsService.getScore(), {
+      .text(600, 20, "| Score: " + this.StatsService.getScore(), {
         fontSize: "22px",
         fill: "#ffffff",
         fontStyle: "bold",
