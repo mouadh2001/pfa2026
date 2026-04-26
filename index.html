@@ -23,64 +23,133 @@
     <!-- LOGIN CONTAINER -->
     <div id="login-container">
       <div class="glass-card">
-        <div class="logo-section">
-          <div class="flask-icon">🧪</div>
-          <h2>Patho Quest</h2>
-          <p>Laboratory Authentication Required Select Researcher</p>
+        <!-- LOGIN FORM -->
+        <div id="login-view">
+          <div class="logo-section">
+            <div class="flask-icon">🧪</div>
+            <h2>Patho Quest</h2>
+            <p>Laboratory Authentication Required Select Researcher</p>
+          </div>
+
+          <form id="login-form">
+            <div class="character-selection">
+              <div class="radio-group">
+                <label class="radio-option">
+                  <input type="radio" name="gender" value="man" checked />
+                  <div class="option-content">
+                    <img
+                      src="assets/caracters/man/idel2.png"
+                      alt="Male Researcher"
+                      width="300"
+                      height="180"
+                    />
+                  </div>
+                </label>
+                <label class="radio-option">
+                  <input type="radio" name="gender" value="woman" />
+                  <div class="option-content">
+                    <img
+                      src="assets/caracters/woman/idel1.png"
+                      alt="Female Researcher"
+                      width="300"
+                      height="180"
+                    />
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div class="input-group">
+              <input
+                type="email"
+                id="email"
+                placeholder="Email Address"
+                required
+              />
+            </div>
+
+            <div class="input-group">
+              <input
+                type="password"
+                id="password"
+                placeholder="Access Code"
+                required
+              />
+            </div>
+
+            <button type="submit" class="btn-login">
+              <span class="btn-text">Initialize Session</span>
+              <span class="loader"></span>
+            </button>
+            <p id="error-message"></p>
+          </form>
+
+          <div class="auth-toggle">
+            <p>
+              Don't have an account?
+              <a href="#" id="go-to-register">Create one</a>
+            </p>
+          </div>
         </div>
 
-        <form id="login-form">
-          <div class="character-selection">
-            <div class="radio-group">
-              <label class="radio-option">
-                <input type="radio" name="gender" value="man" checked />
-                <div class="option-content">
-                  <img
-                    src="assets/caracters/man/idel2.png"
-                    alt="Male Researcher"
-                    width="300"
-                    height="180"
-                  />
-                </div>
-              </label>
-              <label class="radio-option">
-                <input type="radio" name="gender" value="woman" />
-                <div class="option-content">
-                  <img
-                    src="assets/caracters/woman/idel1.png"
-                    alt="Female Researcher"
-                    width="300"
-                    height="180"
-                  />
-                </div>
-              </label>
+        <!-- SIGNUP FORM -->
+        <div id="signup-view" style="display: none">
+          <div class="logo-section">
+            <div class="flask-icon">🧪</div>
+            <h2>Join PathQuest</h2>
+            <p>Create Your Researcher Account</p>
+          </div>
+
+          <form id="signup-form">
+            <div class="input-group">
+              <input
+                type="text"
+                id="signup-username"
+                placeholder="Username"
+                required
+              />
             </div>
-          </div>
 
-          <div class="input-group">
-            <input
-              type="email"
-              id="email"
-              placeholder="Email Address"
-              required
-            />
-          </div>
+            <div class="input-group">
+              <input
+                type="email"
+                id="signup-email"
+                placeholder="Email Address"
+                required
+              />
+            </div>
 
-          <div class="input-group">
-            <input
-              type="password"
-              id="password"
-              placeholder="Access Code"
-              required
-            />
-          </div>
+            <div class="input-group">
+              <input
+                type="password"
+                id="signup-password"
+                placeholder="Access Code (min 6 characters)"
+                required
+              />
+            </div>
 
-          <button type="submit" class="btn-login">
-            <span class="btn-text">Initialize Session</span>
-            <span class="loader"></span>
-          </button>
-          <p id="error-message"></p>
-        </form>
+            <div class="input-group">
+              <input
+                type="password"
+                id="signup-confirm-password"
+                placeholder="Confirm Access Code"
+                required
+              />
+            </div>
+
+            <button type="submit" class="btn-signup">
+              <span class="btn-text">Create Account</span>
+              <span class="loader"></span>
+            </button>
+            <p id="signup-error-message"></p>
+          </form>
+
+          <div class="auth-toggle">
+            <p>
+              Already have an account? <a href="#" id="go-to-login">Sign in</a>
+            </p>
+          </div>
+        </div>
       </div>
     </div>
 

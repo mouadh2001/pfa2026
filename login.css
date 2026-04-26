@@ -70,7 +70,8 @@ body {
 }
 
 /* ===== Inputs ===== */
-#login-form input {
+#login-form input,
+#signup-form input {
   width: 100%;
   padding: 12px 15px;
   margin: 10px 0;
@@ -83,7 +84,8 @@ body {
   transition: all 0.3s ease;
 }
 
-#login-form input:focus {
+#login-form input:focus,
+#signup-form input:focus {
   border-color: #8f94fb;
   box-shadow: 0 0 10px #8f94fb;
   outline: none;
@@ -91,7 +93,8 @@ body {
 }
 
 /* ===== Button ===== */
-#login-form button {
+#login-form button,
+#signup-form button {
   width: 100%;
   padding: 12px;
   margin-top: 15px;
@@ -107,11 +110,13 @@ body {
   text-transform: uppercase;
 }
 
-#login-form button:hover {
+#login-form button:hover,
+#signup-form button:hover {
   background: linear-gradient(45deg, #8f94fb, #4e54c8);
   box-shadow: 0 0 20px #8f94fb;
   transform: scale(1.05);
 }
+
 /* Loader hidden by default */
 .loader {
   display: none;
@@ -132,21 +137,53 @@ body {
 }
 
 /* Loading state */
-.btn-login.loading .btn-text {
+.btn-login.loading .btn-text,
+.btn-signup.loading .btn-text {
   display: none;
 }
 
-.btn-login.loading .loader {
+.btn-login.loading .loader,
+.btn-signup.loading .loader {
   display: block;
 }
 
 /* ===== Error Message ===== */
-#error-message {
+#error-message,
+#signup-error-message {
   color: #ff4c4c;
   margin-top: 10px;
   text-align: center;
   font-weight: bold;
   text-shadow: 0 0 5px #000;
+}
+
+/* ===== Auth Toggle ===== */
+.auth-toggle {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.auth-toggle p {
+  color: #aaaaaa;
+  font-size: 12px;
+  text-shadow: none;
+  white-space: normal;
+  display: block;
+}
+
+.auth-toggle a {
+  color: #00f2ff;
+  text-decoration: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-shadow: 0 0 5px #00f2ff;
+}
+
+.auth-toggle a:hover {
+  color: #4e54c8;
+  text-shadow: 0 0 10px #4e54c8;
+  text-decoration: underline;
 }
 
 /* ===== Game Container ===== */

@@ -54,6 +54,9 @@ export class ItemManager {
   }
 
   handleItemCollision(player, item) {
+    // Prevent reopening modal while one is already open
+    if (this.scene.popupOpen) return;
+
     if (item.isLoupe) {
       // 1. Trigger the link/menu
       this.scene.modal.openTumorMenu(item);
@@ -92,7 +95,9 @@ export class ItemManager {
 
     // Logic: Standard Scopes
     this.scene.currentScope = item;
-    const questionData = this.scene.levelData ? this.scene.levelData[item.questionId] : null;
+    const questionData = this.scene.levelData
+      ? this.scene.levelData[item.questionId]
+      : null;
     if (questionData) {
       this.scene.StatsService.startQuestion(item.questionId);
       this.scene.modal.openQCM(item.questionId, questionData);

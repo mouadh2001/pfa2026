@@ -111,14 +111,21 @@ export default class GameScene extends Phaser.Scene {
     let floorVisualY = this.floorY;
     if (this.levelConfig.isDeadlyFloor) {
       floorVisualY -= 30; // Raise it by 30 units as requested
-      
-      this.deadlyFloorRect = this.add.rectangle(worldWidth / 2, floorVisualY, worldWidth, 40, 0xff0000, 0.6);
+
+      this.deadlyFloorRect = this.add.rectangle(
+        worldWidth / 2,
+        floorVisualY,
+        worldWidth,
+        40,
+        0xff0000,
+        0.6,
+      );
       this.deadlyFloorRect.setDepth(0);
       this.physics.add.existing(this.deadlyFloorRect, true); // static body
     } else {
       createFloor(this, worldWidth / 2, floorVisualY, worldWidth, 40);
     }
-    
+
     this.levelConfig.platforms.forEach((platform) => {
       createPlatformFromConfig(this, platform);
     });
@@ -185,13 +192,13 @@ export default class GameScene extends Phaser.Scene {
         enemyConfig.speed,
         enemyConfig.name,
         enemyConfig.type,
-        enemyConfig.aggroRange
+        enemyConfig.aggroRange,
       );
     });
 
     // overlaps and colliders
     this.physics.add.collider(this.enemies, this.enemies);
-    
+
     this.physics.add.overlap(
       this.player,
       this.itemManager.items,
@@ -299,6 +306,9 @@ export default class GameScene extends Phaser.Scene {
 
   // ===== LEVEL SPECIFIC DOMAIN LOGIC =====
   async handleQCMSuccess(id) {
+    // Close the QCM modal immediately
+    this.modal.closeModal();
+
     this.StatsService.addCorrect(id);
     if (this.scoreText) {
       this.scoreText.setText("| Score: " + this.StatsService.getScore());

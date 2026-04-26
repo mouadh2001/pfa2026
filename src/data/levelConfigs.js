@@ -169,7 +169,7 @@ export const LEVELS = {
       {
         x: 150,
         y: 150,
-        width: 100,
+        width: 150,
         height: 20,
         id: "elevator",
         movement: {
@@ -182,7 +182,7 @@ export const LEVELS = {
       {
         x: 970,
         y: 300,
-        width: 100,
+        width: 150,
         height: 20,
         id: "elevator",
         movement: {
@@ -195,7 +195,7 @@ export const LEVELS = {
       {
         x: 200,
         y: 260,
-        width: 100,
+        width: 150,
         height: 20,
         id: "elevator",
         movement: {
@@ -208,7 +208,7 @@ export const LEVELS = {
       {
         x: 1100,
         y: 260,
-        width: 100,
+        width: 150,
         height: 20,
         id: "elevator",
         movement: {
@@ -241,8 +241,8 @@ export const LEVELS = {
       {
         x: 400,
         y: 200,
-        range: 300,
-        speed: 90,
+        range: 100,
+        speed: 50,
         name: "E1",
         type: "follower",
         aggroRange: 350,
@@ -250,8 +250,8 @@ export const LEVELS = {
       {
         x: 600,
         y: 350,
-        range: 300,
-        speed: 90,
+        range: 100,
+        speed: 50,
         name: "E2",
         type: "follower",
         aggroRange: 350,
@@ -259,8 +259,8 @@ export const LEVELS = {
       {
         x: 680,
         y: 50,
-        range: 1000,
-        speed: 90,
+        range: 100,
+        speed: 50,
         name: "E3",
         type: "follower",
         aggroRange: 350,

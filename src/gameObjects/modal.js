@@ -52,7 +52,8 @@ export class ModalUI {
 
     // Completely freeze the game silently
     if (this.tumorWindow) {
-      if (this.scene.StatsService) this.scene.StatsService.startObservationTimer();
+      if (this.scene.StatsService)
+        this.scene.StatsService.startObservationTimer();
       this.scene.popupOpen = true;
       this.scene.physics.pause();
 
@@ -60,7 +61,8 @@ export class ModalUI {
       const checkClosedTimer = setInterval(() => {
         if (this.tumorWindow.closed) {
           clearInterval(checkClosedTimer);
-          if (this.scene.StatsService) this.scene.StatsService.stopObservationTimer();
+          if (this.scene.StatsService)
+            this.scene.StatsService.stopObservationTimer();
           this.scene.physics.resume();
           this.scene.popupOpen = false;
         }
@@ -183,10 +185,10 @@ export class ModalUI {
             closeBtn.style.color = "#ffffff";
             closeBtn.style.marginTop = "20px";
             closeBtn.onclick = () => {
-              this.scene.events.emit("qcm_success", id);
-              this.closeModal();
               feedbackImagesContainer.innerHTML = ""; // nothing to show
               this.selectedCorrect = null;
+              // Emit first, let handleQCMSuccess manage modal state
+              this.scene.events.emit("qcm_success", id);
             };
             container.appendChild(closeBtn);
           } else {
