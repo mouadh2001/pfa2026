@@ -21,7 +21,7 @@ body {
 /* ===== Login Container ===== */
 #login-container {
   background: rgba(0, 0, 0, 0.85);
-  padding: 20px; /* Increased padding for better breathability */
+  padding: 15px; /* Increased padding for better breathability */
   border-radius: 15px;
   box-shadow: 0 0 25px rgba(78, 84, 200, 0.8);
   display: flex;
@@ -97,7 +97,7 @@ body {
 #signup-form button {
   width: 100%;
   padding: 12px;
-  margin-top: 15px;
+  margin-top: 10px;
   background: linear-gradient(45deg, #4e54c8, #8f94fb);
   border: none;
   border-radius: 10px;
