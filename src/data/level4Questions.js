@@ -1,6 +1,6 @@
-export const level2Questions = {
+export const level4Questions = {
   q1: {
-    q: "Level 2: Which histological feature is most prominent?",
+    q: "Level 4: Which histological feature is most prominent?",
     a: [
       "Uniform spindle cells",
       "Extensive necrosis",
@@ -8,7 +8,7 @@ export const level2Questions = {
       "Clear cell change",
       "Lymphoid infiltrate",
     ],
-    c: [2],
+    c: [0],
     feedbacks: [
       { text: "Not this one. Look for more mitoses.", imgs: [] },
       {
@@ -32,7 +32,7 @@ export const level2Questions = {
       "CD34 and STAT6",
       "Chromogranin and Synaptophysin",
     ],
-    c: [0, 1, 2, 3, 4],
+    c: [1],
     feedbacks: [
       { text: "This panel is more typical of melanoma.", imgs: [] },
       {
@@ -77,7 +77,7 @@ export const level2Questions = {
       "Low cellularity",
       "Minimal pleomorphism",
     ],
-    c: [2],
+    c: [3],
     feedbacks: [
       { text: "Uniform cytology suggests a benign process.", imgs: [] },
       { text: "Correct! High N:C ratio is a malignancy feature.", imgs: [] },
@@ -89,7 +89,7 @@ export const level2Questions = {
   q5: {
     q: "What is the most likely line of differentiation?",
     a: ["Neural", "Muscle", "Vascular", "Adipocytic", "Fibrohistiocytic"],
-    c: [1],
+    c: [2],
     feedbacks: [
       {
         text: "Neural differentiation is not supported by the morphology.",
@@ -110,7 +110,7 @@ export const level2Questions = {
       "PanCK + EMA",
       "HMB45 + Melan-A",
     ],
-    c: [3],
+    c: [0],
     feedbacks: [
       {
         text: "Correct! Smooth muscle markers confirm the diagnosis.",
@@ -131,7 +131,7 @@ export const level2Questions = {
       "Malignant peripheral nerve sheath tumor",
       "Synovial sarcoma",
     ],
-    c: [1],
+    c: [0],
     feedbacks: [
       {
         text: "Correct! The tumor is best classified as leiomyosarcoma.",
