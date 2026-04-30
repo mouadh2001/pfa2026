@@ -128,7 +128,7 @@ export const level5Questions = {
       "Leiomyosarcoma",
       "Gastrointestinal stromal tumor",
       "Dermatofibrosarcoma protuberans",
-      "Malignant peripheral nerve sheath tumor",
+      "Malignant nerve sheath tumor",
       "Synovial sarcoma",
     ],
     c: [3],
