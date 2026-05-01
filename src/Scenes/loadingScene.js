@@ -114,7 +114,7 @@ export default class PreloaderScene extends Phaser.Scene {
     this.load.image("scope", "../assets/items/scope.png");
     this.load.image("loupe", "../assets/items/loupe.png");
     this.load.image("platforme", "../assets/items/platforme.png");
-    this.load.image("enemy", "../assets/enemy/enemy1.png");
+    this.load.image("enemy", "../assets/enemy/enemy.png");
     this.load.image("golden", "../assets/items/golden.png");
 
     this.load.audio("bgMusic", "../sounds/background.wav");
