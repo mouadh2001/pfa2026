@@ -193,7 +193,7 @@ export class PlayerController {
       }
 
       // Check for JUMPING
-      if (cursors.up.isDown) {
+      if (cursors.space.isDown) {
         player.setVelocityY(-550);
         this.sfx.jump.play();
         if (this.sfx.run.isPlaying) this.sfx.run.stop();
