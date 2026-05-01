@@ -99,7 +99,7 @@ export default class PreloaderScene extends Phaser.Scene {
     });
 
     // 🔥 LOAD YOUR ASSETS BELOW (keep yours)
-    this.load.image("bg", "../assets/background/background.png");
+    this.load.image("bg", "../assets/background/background_1.png");
 
     this.load.image("idel", "../assets/caracters/woman/idel1.png");
     this.load.image("walk", "../assets/caracters/woman/walk1.png");
